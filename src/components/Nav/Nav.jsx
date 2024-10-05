@@ -11,7 +11,7 @@ function Nav () {
     return (
         <div className={navCSS.nav_wrapper}>
             <div className={navCSS.logo}>
-                <a href="#"><span>Moonlight Valley Hotel****</span></a>
+                <a href="#"><span>Moonlight Valley Hotel</span><span id={navCSS.stars}>****</span></a>
             </div>
             <ul ref={menu}>
                 <li><a href="#">Kezdőlap</a></li>

@@ -1,0 +1,40 @@
+.nav_wrapper{
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15%;
+    position: fixed;
+    top:0;
+    z-index: 99;
+}
+#stars{
+    color: darkgoldenrod;
+    padding-left: 12px;
+}
+
+.nav_wrapper .logo a{
+    font-size: 25px;
+    font-weight: 700;
+    color: #d4a373;
+}
+.nav_wrapper ul li{
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.Nav_btns{
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.nav_wrapper ul li a{
+    color: black;
+    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+
+}
+

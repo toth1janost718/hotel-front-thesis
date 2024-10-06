@@ -14,11 +14,15 @@
 }
 
 button{
-    height: 45px;
-    width: 150px;
-    border:1px solid white;
-    background: transparent;
+    height: 38px;
+    width: 130px;
+    border:none;
+    background-color: #bda06a;
+    font-family: Montserrat, sans-serif;
+    letter-spacing: 1px;
     font-size: 15px;
+    color:ghostwhite;border-radius: 30px;
+    box-shadow: 2px 2px 3px #ffffff94 , inset 3px 3px 10px #ffffff39;
     font-weight: 500;
     transition: 1s;
     cursor: pointer;
@@ -26,5 +30,6 @@ button{
 }
 
 button:hover{
-    border-color: black;
+    box-shadow: 0 0 0 #ffffff94 , inset 3px 3px 10px #ffffff39;
+    transform: scale(0.95);
 }

@@ -40,3 +40,19 @@ button:hover{
     flex-direction: column;
     gap: 40px;
 }
+
+.section_title{
+    font-size: 30px;
+    color: #1e1e1e;
+}
+
+.section_title span{
+    color:#bda06a;
+}
+.section_header{
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e1e1e;
+    font-family: 'Montserrat', sans-serif;
+
+}

@@ -22,6 +22,9 @@
     z-index: -1;
 }
 
+.navbarScroll{
+    background-color: #1e1e1e;
+}
 #stars{
     color: darkgoldenrod;
     padding-left: 12px;

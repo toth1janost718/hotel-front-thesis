@@ -4,10 +4,10 @@ import {Swiper,SwiperSlide} from "swiper/react";
 import 'swiper/css'
 import {Autoplay} from "swiper/modules";
 
-import  feedbackl_client1 from "../../assets/img/testimonials_front/client1.jpg"
-import  feedback_client2 from "../../assets/img/testimonials_front/client2.jpg"
-import  feedback_client3 from "../../assets/img/testimonials_front/client3.jpg"
-import  feedback_client4 from "../../assets/img/testimonials_front/client4.jpg"
+import  client1 from "../../assets/img/feedback_front/client1.jpg"
+import  client2 from "../../assets/img/feedback_front/client2.jpg"
+import  client3 from "../../assets/img/feedback_front/client3.jpg"
+import  client4 from "../../assets/img/feedback_front/client4.jpg"
 
 
 function Feedback() {
@@ -22,7 +22,7 @@ function Feedback() {
                 autoplay={
                     {delay: 1000,
                     }}
-                breakpoints={{
+                    breakpoints={{
                     0:{slidesPerView:1},
                     1200:{slidesPerView:2},
                 }}
@@ -30,43 +30,45 @@ function Feedback() {
                 modules={[Autoplay]}
                 className={feedbackCSS.swiper}>
                 <SwiperSlide>
-                    <div className={feedbackCSS.feedback}></div>
-                    <img src={feedbackl_client1} alt=""/>
+                    <div className={feedbackCSS.feedback}>
+                    <img src={client1} alt=""/>
                     <div className={feedbackCSS.content}>
                         <h3> Német Ábel<span></span></h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus atque, cupiditate harum impedit iste nulla optio rem sint tempore unde!
                         </p>
                     </div>
+                    </div>
                 </SwiperSlide>
                 <SwiperSlide>
-                    <div className={feedbackCSS.feedback}></div>
-                    <img src={feedback_client2} />
+                    <div className={feedbackCSS.feedback}>
+                    <img src={client2} />
                     <div className={feedbackCSS.content}>
                         <h3> Nagy Attila<span></span></h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus atque, cupiditate harum impedit iste nulla optio rem sint tempore unde!
                         </p>
                     </div>
+                    </div>
                 </SwiperSlide>
                 <SwiperSlide>
-                    <div className={feedbackCSS.feedback}></div>
-                    <img src={feedback_client3} />
+                    <div className={feedbackCSS.feedback}>
+                    <img src={client3} />
                     <div className={feedbackCSS.content}>
                         <h3>Teszt Anita <span></span></h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus atque, cupiditate harum impedit iste nulla optio rem sint tempore unde!
                         </p>
                     </div>
-
+                    </div>
 
                 </SwiperSlide>
                 <SwiperSlide>
-                    <div className={feedbackCSS.feedback}></div>
-                    <img src={feedback_client4} />
+                    <div className={feedbackCSS.feedback}>
+                    <img src={client4} />
                     <div className={feedbackCSS.content}>
                         <h3> Teszt Vanda<span></span></h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus atque, cupiditate harum impedit iste nulla optio rem sint tempore unde!
                         </p>
                     </div>
-
+                    </div>
 
                 </SwiperSlide>
 

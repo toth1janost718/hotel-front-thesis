@@ -7,24 +7,41 @@ import Rooms from './components/Rooms/Room.jsx';
 import Amenities from './components/Amenities/Amenities.jsx';
 import Feedback from './components/Feedbacks/Feedback.jsx';
 import Footer from  './components/Footer/Footer.jsx';
+import {BrowserRouter as  Router, Routes,Route} from "react-router-dom";
+import LoginPage from './pages/loginPage/LoginPage.jsx'
 
 function App() {
 
 
   return (
-
+    <Router>
       <>
-          <Nav />
-          <Header />
-          <About/>
-          <Services/>
-          <Rooms/>
-          <Amenities/>
-          <Feedback/>
-          <Footer/>
+          <Routes>
 
+              {/* Főoldal felépítése */}
+
+              <Route
+                  path="/"
+                  element={
+
+              <>
+              <Nav />
+              <Header />
+              <About/>
+              <Services/>
+              <Rooms/>
+              <Amenities/>
+              <Feedback/>
+              <Footer/>
+              </>
+
+          }
+              />
+              {/* További oldalak hozzáadása */}
+              <Route path="/login" element={<LoginPage/>} />
+          </Routes>
       </>
-
+    </Router>
   )
 }
 

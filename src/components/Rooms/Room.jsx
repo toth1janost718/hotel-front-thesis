@@ -1,6 +1,6 @@
 import React from 'react';
 import roomCss from './../Rooms/Room.module.css';
-import aboutCSS from "../About/About.module.css";
+
 
 function Room() {
     return (

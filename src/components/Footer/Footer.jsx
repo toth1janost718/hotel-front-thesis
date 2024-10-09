@@ -1,5 +1,6 @@
 import React from 'react';
 import footerCSS  from './../Footer/Footer.module.css'
+import NavItem from "../NavItem/NavItem.jsx";
 
 
 function Footer() {
@@ -18,8 +19,8 @@ function Footer() {
                 <p>Rólunk</p>
                 <p>Kapcsolat</p>
                 <p>Szobák</p>
-                <p>Edzőterem</p>
                 <p>Étterem</p>
+                <NavItem label="Belépés" to="/login" />
 
             </div>
             <div className={footerCSS.footerLinks}>
@@ -28,10 +29,10 @@ function Footer() {
                 <p>Email: <span>recepcio@moonlighthotel.hu</span></p>
                 <p>Telefonszám: <span>30-123-4578</span></p>
 
-              </div>
+            </div>
 
         </footer>
-)
+    )
 }
 
 export default Footer;

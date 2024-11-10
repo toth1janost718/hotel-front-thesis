@@ -49,15 +49,15 @@ function LoginPage() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    UserName: username, // Az input mező értéke
-                    Password: password  // Az input mező értéke
+                    UserName: username,
+                    Password: password
                 })
             });
 
             if (response.ok) {
                 const data = await response.json();
                 if (data.isSuccess) {
-                    navigate("/"); // Sikeres bejelentkezés után a főoldalra navigál
+                    navigate("/");
                 } else {
                     setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
                 }

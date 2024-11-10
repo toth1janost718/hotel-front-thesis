@@ -18,11 +18,16 @@ function LoginPage() {
 
 
     const navigate = useNavigate();
-    const handleNavigation = () => {
-        navigate("/"); //
-    };
 
     const [action,setAction]=useState('');
+    const [username, setUsername] = useState(''); // Felhasználónév állapot
+    const [password, setPassword] = useState(''); // Jelszó állapot
+    const [errorMessage, setErrorMessage] = useState(''); // Hibaüzenet állapot
+
+// Navigáció a főoldalra
+    const handleNavigation = () => {
+        navigate("/");
+    };
 
     const registerLink=()=>{
         setAction('active');
@@ -34,24 +39,62 @@ function LoginPage() {
 
     };
 
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch("http://localhost:5172/api/UserLogin/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    UserName: username, // Az input mező értéke
+                    Password: password  // Az input mező értéke
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.isSuccess) {
+                    navigate("/"); // Sikeres bejelentkezés után a főoldalra navigál
+                } else {
+                    setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
+                }
+            } else {
+                setErrorMessage("Hiba történt a bejelentkezés során.");
+            }
+        } catch (error) {
+            console.error("Hálózati hiba:", error);
+            setErrorMessage("Nem sikerült kapcsolódni a szerverhez.");
+        }
+    };
+
 
     return (
         <div className={`${loginPageCSS.wrapper} ${action === 'active' ? loginPageCSS.active : ''}`}>
             <div
                 className={`${loginPageCSS.formBox} ${loginPageCSS.login} ${action === 'active' ? loginPageCSS.activeLogin : ''}`}>
-                <form action="">
+                <form onSubmit={handleLogin}>
                     <h1>Bejelentkezés</h1>
                     <div className={loginPageCSS.inputBox}>
                         <input type="text"
-
                                placeholder='Felhasználónév'
+                               value={username}
+                               onChange={(e) => setUsername(e.target.value)} // Felhasználónév frissítése
                                required/>
                         <FaUser className={loginPageCSS.icon}/>
                     </div>
                     <div className={loginPageCSS.inputBox}>
-                        <input type="password" placeholder='Jelszó' required/>
+                        <input type="password"
+                               placeholder='Jelszó'
+                               value={password}
+                               onChange={(e) => setPassword(e.target.value)} // Jelszó frissítése
+                               required/>
                         <FaLock className={loginPageCSS.icon}/>
                     </div>
+                    {/* Hibaüzenet megjelenítése, ha van */}
+                    {errorMessage && <p className={loginPageCSS.error}>{errorMessage}</p>}
 
                     <button type='submit'>Belépés</button>
                     <div className={loginPageCSS.registerLink}>

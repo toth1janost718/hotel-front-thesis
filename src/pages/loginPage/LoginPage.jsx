@@ -57,7 +57,7 @@ function LoginPage() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.isSuccess) {
-                    navigate("/");
+                    navigate("/dashboard");
                 } else {
                     setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
                 }

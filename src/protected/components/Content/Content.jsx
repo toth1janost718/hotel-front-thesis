@@ -2,7 +2,7 @@ import React from "react";
 import './Content.module.css'
 
 function Content() {
-    return (<div>Sikeres volt a bejelentkezésed</div>)
+    return (<div></div>)
 }
 
 export default Content;

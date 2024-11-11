@@ -1,42 +1,36 @@
-import React, { useState } from 'react';
-import loginPageCSS from   './LoginPage.module.css';
-import {FaUser,FaLock,FaEnvelope} from 'react-icons/fa';
-import {useEffect} from "react";
+import React, { useState, useEffect } from 'react';
+import loginPageCSS from './LoginPage.module.css';
+import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from '../../context/AuthContext';
 
 function LoginPage() {
-
-
     useEffect(() => {
         document.body.classList.add('login-body');
-
         return () => {
             document.body.classList.remove('login-body');
         };
     }, []);
 
-
     const navigate = useNavigate();
+    const { login } = useAuth();
 
-    const [action,setAction]=useState('');
-    const [username, setUsername] = useState(''); // Felhasználónév állapot
-    const [password, setPassword] = useState(''); // Jelszó állapot
-    const [errorMessage, setErrorMessage] = useState(''); // Hibaüzenet állapot
+    const [action, setAction] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-// Navigáció a főoldalra
+
     const handleNavigation = () => {
         navigate("/");
     };
 
-    const registerLink=()=>{
+    const registerLink = () => {
         setAction('active');
-
     };
 
-    const loginLink=()=>{
+    const loginLink = () => {
         setAction('');
-
     };
 
     const handleLogin = async (e) => {
@@ -57,6 +51,7 @@ function LoginPage() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.isSuccess) {
+                    login();
                     navigate("/dashboard");
                 } else {
                     setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
@@ -64,12 +59,12 @@ function LoginPage() {
             } else {
                 setErrorMessage("Hiba történt a bejelentkezés során.");
             }
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
-            console.error("Hálózati hiba:", error);
+
             setErrorMessage("Nem sikerült kapcsolódni a szerverhez.");
         }
     };
-
 
     return (
         <div className={`${loginPageCSS.wrapper} ${action === 'active' ? loginPageCSS.active : ''}`}>
@@ -81,28 +76,27 @@ function LoginPage() {
                         <input type="text"
                                placeholder='Felhasználónév'
                                value={username}
-                               onChange={(e) => setUsername(e.target.value)} // Felhasználónév frissítése
-                               required/>
-                        <FaUser className={loginPageCSS.icon}/>
+                               onChange={(e) => setUsername(e.target.value)}
+                               required />
+                        <FaUser className={loginPageCSS.icon} />
                     </div>
                     <div className={loginPageCSS.inputBox}>
                         <input type="password"
                                placeholder='Jelszó'
                                value={password}
-                               onChange={(e) => setPassword(e.target.value)} // Jelszó frissítése
-                               required/>
-                        <FaLock className={loginPageCSS.icon}/>
+                               onChange={(e) => setPassword(e.target.value)}
+                               required />
+                        <FaLock className={loginPageCSS.icon} />
                     </div>
-                    {/* Hibaüzenet megjelenítése, ha van */}
+
                     {errorMessage && <p className={loginPageCSS.error}>{errorMessage}</p>}
 
                     <button type='submit'>Belépés</button>
                     <div className={loginPageCSS.registerLink}>
                         <p>Elfelejtette a jelszavát? <a href="#" onClick={registerLink}> Új jelszó </a></p>
                     </div>
-
                 </form>
-                <button type='submit' onClick={handleNavigation} >Vissza a weboldalra</button>
+                <button type='submit' onClick={handleNavigation}>Vissza a weboldalra</button>
             </div>
 
             <div
@@ -110,26 +104,22 @@ function LoginPage() {
                 <form action="">
                     <h1>Elfelejtett jelszó</h1>
                     <div className={loginPageCSS.inputBox}>
-                        <input type="text" placeholder='Felhasználónév' required/>
-                        <FaUser className={loginPageCSS.icon}/>
+                        <input type="text" placeholder='Felhasználónév' required />
+                        <FaUser className={loginPageCSS.icon} />
                     </div>
                     <div className={loginPageCSS.inputBox}>
-                        <input type="email" placeholder='E-mail' required/>
-                        <FaEnvelope className={loginPageCSS.icon}/>
+                        <input type="email" placeholder='E-mail' required />
+                        <FaEnvelope className={loginPageCSS.icon} />
                     </div>
-
 
                     <button type='submit'>Jelszó küldése</button>
                     <div className={loginPageCSS.registerLink}>
                         <p>Be szeretne jelentkezni? <a href="#" onClick={loginLink}> Belépés </a></p>
                     </div>
-
                 </form>
-
-
             </div>
         </div>
-    )
+    );
 }
 
 export default LoginPage;

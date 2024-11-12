@@ -17,7 +17,7 @@
 
 .header {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-style: italic;
     text-align: center;
     margin-bottom: 70px;
     padding: 0 10px;
@@ -35,9 +35,11 @@
     border-radius: 10px;
     margin-left: 5px;
     margin-right: 5px;
+    cursor: pointer;
 }
 
-.sidebar .list-group-item:hover {
+.sidebar .list-group-item:hover,
+.offcanvas-sidebar .list-group-item:hover {
     background-color: #B8996D;
     color: white;
 }
@@ -50,8 +52,6 @@
 }
 
 .offcanvas-sidebar .list-group-item {
-    display: flex;
-    align-items: center;
     background-color: #C4A484;
     color: white;
     padding: 15px 20px;
@@ -59,9 +59,11 @@
     border-radius: 10px;
     margin-left: 5px;
     margin-right: 5px;
+    display: flex;
+    align-items: center;
 }
 
-.offcanvas-sidebar .list-group-item:hover {
-    background-color: #B8996D;
-    color: white;
+.list-group-item.active {
+    background-color: green !important;
+    color: white !important;
 }

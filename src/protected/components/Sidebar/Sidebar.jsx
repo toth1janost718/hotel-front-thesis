@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Offcanvas, ListGroup, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { navigationLinks } from './NavLinkData';
 import styles from './Sidebar.module.css';
 
 function Sidebar() {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -14,6 +15,7 @@ function Sidebar() {
     const handleLogout = () => {
         navigate('/');
     };
+
     const toUrlFriendlyString = (str) => {
         return str
             .normalize('NFD') // ékezetek leválasztása
@@ -46,21 +48,24 @@ function Sidebar() {
                         Moonlight Valley Hotel
                     </div>
                     <ListGroup variant="flush">
-                        {navigationLinks.map((link) => (
-                            <ListGroup.Item
-                                key={link.id}
-                                action
-                                onClick={() => link.title === 'Kilépés' ? handleLogout() : navigate(`/${toUrlFriendlyString(link.title)}`)}
-                                className={`${styles['list-group-item']} d-flex align-items-center`}
-                            >
-                                <img
-                                    src={link.image}
-                                    alt={link.title}
-                                    className={styles.icon}
-                                />
-                                {link.title}
-                            </ListGroup.Item>
-                        ))}
+                        {navigationLinks.map((link) => {
+                            const isActive = location.pathname === `/${toUrlFriendlyString(link.title)}`;
+                            return (
+                                <ListGroup.Item
+                                    key={link.id}
+                                    action
+                                    onClick={() => link.title === 'Kilépés' ? handleLogout() : navigate(`/${toUrlFriendlyString(link.title)}`)}
+                                    className={`${styles['list-group-item']} d-flex align-items-center ${isActive ? styles.active : ''}`}
+                                >
+                                    <img
+                                        src={link.image}
+                                        alt={link.title}
+                                        className={styles.icon}
+                                    />
+                                    {link.title}
+                                </ListGroup.Item>
+                            );
+                        })}
                     </ListGroup>
                 </Offcanvas.Body>
             </Offcanvas>
@@ -70,21 +75,24 @@ function Sidebar() {
                     Moonlight Valley Hotel
                 </div>
                 <ListGroup variant="flush">
-                    {navigationLinks.map((link) => (
-                        <ListGroup.Item
-                            key={link.id}
-                            action
-                            onClick={() => link.title === 'Kilépés' ? handleLogout() : navigate(`/${toUrlFriendlyString(link.title)}`)}
-                            className={`${styles['list-group-item']} d-flex align-items-center`}
-                        >
-                            <img
-                                src={link.image}
-                                alt={link.title}
-                                className={styles.icon}
-                            />
-                            {link.title}
-                        </ListGroup.Item>
-                    ))}
+                    {navigationLinks.map((link) => {
+                        const isActive = location.pathname === `/${toUrlFriendlyString(link.title)}`;
+                        return (
+                            <ListGroup.Item
+                                key={link.id}
+                                action
+                                onClick={() => link.title === 'Kilépés' ? handleLogout() : navigate(`/${toUrlFriendlyString(link.title)}`)}
+                                className={`${styles['list-group-item']} d-flex align-items-center ${isActive ? styles.active : ''}`}
+                            >
+                                <img
+                                    src={link.image}
+                                    alt={link.title}
+                                    className={styles.icon}
+                                />
+                                {link.title}
+                            </ListGroup.Item>
+                        );
+                    })}
                 </ListGroup>
             </div>
         </div>

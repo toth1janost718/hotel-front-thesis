@@ -3,7 +3,16 @@ import { Button } from 'react-bootstrap';
 import bookingStyles from "./Booking.module.css";
 
 function Booking() {
-    const [currentDate, setCurrentDate] = useState(new Date(2024, 1, 6));
+    // Az aktuális hét első napjára állítjuk a kezdő dátumot
+    const getStartOfWeek = (date) => {
+        const startOfWeek = new Date(date);
+        const dayOfWeek = startOfWeek.getDay();
+        const diff = startOfWeek.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Hétfő az első nap
+        startOfWeek.setDate(diff);
+        return startOfWeek;
+    };
+
+    const [currentDate, setCurrentDate] = useState(getStartOfWeek(new Date()));
     const [rooms, setRooms] = useState([]);
 
     useEffect(() => {
@@ -50,14 +59,61 @@ function Booking() {
 
     return (
         <div className={bookingStyles['booking-content']}>
+            {/* Fejléc gombokkal, dátum kijelzéssel és összesítő kártyákkal */}
+            <div className={`${bookingStyles['header']} d-flex align-items-center justify-content-between`}>
+                <Button
+                    variant="success"
+                    style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }}
+                >
+                    Új foglalás
+                </Button>
 
-            <div className={bookingStyles['header']}>
-                <Button variant="primary" onClick={handlePreviousWeek}>Előző</Button>
-                <div>
-                    <div className={bookingStyles['year']}>{year}</div>
-                    <div>{formattedDateRange}</div>
+                <div className="d-flex align-items-center">
+                    <Button
+                        variant="primary"
+                        className="me-2"
+                        style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }}
+                        onClick={handlePreviousWeek}
+                    >
+                        Előző hét
+                    </Button>
+                    <div className="text-center ms-3">
+                        <div className={bookingStyles['year']}>{year}</div>
+                        <div>{formattedDateRange}</div>
+                    </div>
+                    <Button
+                        variant="primary"
+                        className="ms-3"
+                        style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }}
+                        onClick={handleNextWeek}
+                    >
+                        Következő hét
+                    </Button>
                 </div>
-                <Button variant="primary" onClick={handleNextWeek}>Következő</Button>
+
+                {/* Összesítő kártyák */}
+                <div className="d-flex align-items-center ms-3">
+                    <div className={`${bookingStyles['summary-card']} text-center me-3`}>
+                        <div>🛏️</div> {/* Ide jön majd az "Üres" ikon */}
+                        <div>Üres</div>
+                        <div className="text-warning">0</div>
+                    </div>
+                    <div className={`${bookingStyles['summary-card']} text-center me-3`}>
+                        <div>🛌</div> {/* Ide jön majd a "Foglalt" ikon */}
+                        <div>Foglalt</div>
+                        <div className="text-primary">0</div>
+                    </div>
+                    <div className={`${bookingStyles['summary-card']} text-center me-3`}>
+                        <div>📅</div> {/* Ide jön majd az "Előjegyzett" ikon */}
+                        <div>Előjegyzett</div>
+                        <div className="text-success">0</div>
+                    </div>
+                    <div className={`${bookingStyles['summary-card']} text-center`}>
+                        <div>⚠️</div> {/* Ide jön majd a "Rossz" ikon */}
+                        <div>Rossz</div>
+                        <div className="text-danger">0</div>
+                    </div>
+                </div>
             </div>
 
             <div className={bookingStyles['calendar-table']}>

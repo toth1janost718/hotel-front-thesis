@@ -2,3 +2,62 @@
     margin-left: 250px;
     padding: 20px;
 }
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.year {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.calendar-table {
+    display: grid;
+    grid-template-columns: 120px repeat(7, 1fr);
+    gap: 0;
+    border-collapse: collapse;
+    background-color: #ddd;
+}
+
+.calendar-header {
+    display: contents;
+}
+
+.room-label {
+    background-color: #f4f4f4;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.room-number {
+    background-color: #f4f4f4;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.day-header {
+    background-color: #f4f4f4;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.room-row {
+    display: contents;
+}
+
+.empty-cell {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    text-align: center;
+    height: 40px;
+}

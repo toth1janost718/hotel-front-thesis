@@ -8,34 +8,60 @@
     left: 0;
     z-index: 1000;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.sidebar .list-group-item {
-    background-color: #D2B48C;
+.header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 70px;
+    padding: 0 10px;
+    line-height: 1.2;
+}
+
+.list-group-item {
+    background-color: #C4A484;
     color: white;
     border: none;
     display: flex;
     align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .sidebar .list-group-item:hover {
-    background-color: #F5DEB3;
+    background-color: #B8996D;
+    color: white;
 }
 
 .sidebar .icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
     object-fit: contain;
 }
 
 .offcanvas-sidebar .list-group-item {
     display: flex;
     align-items: center;
-    background-color: #D2B48C;
+    background-color: #C4A484;
     color: white;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .offcanvas-sidebar .list-group-item:hover {
-    background-color: #F5DEB3;
+    background-color: #B8996D;
+    color: white;
 }

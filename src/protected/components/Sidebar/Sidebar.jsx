@@ -19,12 +19,10 @@ function Sidebar() {
             .normalize('NFD') // ékezetek leválasztása
             .replace(/[\u0300-\u036f]/g, '') // ékezetek eltávolítása
             .toLowerCase();
-    }
-
+    };
 
     return (
         <div>
-
             <Button
                 variant="primary"
                 onClick={handleShow}
@@ -39,12 +37,14 @@ function Sidebar() {
                 ☰
             </Button>
 
-
             <Offcanvas show={show} onHide={handleClose} backdrop={false} className={styles['offcanvas-sidebar']} placement="start">
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>Menü</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
+                    <div className={styles.header}>
+                        Moonlight Valley Hotel
+                    </div>
                     <ListGroup variant="flush">
                         {navigationLinks.map((link) => (
                             <ListGroup.Item
@@ -65,8 +65,10 @@ function Sidebar() {
                 </Offcanvas.Body>
             </Offcanvas>
 
-
             <div className={`d-none d-lg-block ${styles.sidebar}`}>
+                <div className={styles.header}>
+                    Moonlight Valley Hotel
+                </div>
                 <ListGroup variant="flush">
                     {navigationLinks.map((link) => (
                         <ListGroup.Item

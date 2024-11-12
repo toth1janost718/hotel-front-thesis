@@ -1,20 +1,28 @@
 
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Outlet,Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Sidebar  from "../../protected/components/Sidebar/Sidebar.jsx";
 
-// eslint-disable-next-line react/prop-types
-function ProtectedRoute({ children }) {
-    const { isAuthenticated } = useAuth();
+
+function ProtectedRoute() {
+    const {isAuthenticated} = useAuth();
 
 
     // Ha nincs bejelentkezve, irányítson a /login oldalra
     if (!isAuthenticated) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/login"/>;
     }
 
     // Ha be van jelentkezve, engedélyezzük az oldal megtekintését
-    return children;
+    return (
+    <div style={{display: 'flex'}}>
+        <Sidebar/>
+        <div style={{flex: 1}}>
+            <Outlet/>
+        </div>
+    </div>
+    );
 }
 
 export default ProtectedRoute;

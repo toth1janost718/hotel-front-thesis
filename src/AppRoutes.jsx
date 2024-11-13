@@ -11,6 +11,7 @@ import Accountant from "./protected/pages/Accountant/Accountant.jsx";
 import Employees from "./protected/pages/Employees/Employees.jsx"
 import Leaves from "./protected/pages/Leaves/Leaves.jsx";
 import Settings from "./protected/pages/Settings/Settings.jsx";
+import CreateBooking from "./protected/pages/Booking/CreateBooking/CreateBooking.jsx";
 
 
 const AppRoutes = () => {
@@ -31,6 +32,8 @@ const AppRoutes = () => {
                 <Route path="/alkalmazottak" element={<Employees />} />
                 <Route path="/szabadsag" element={<Leaves />} />
                 <Route path="/beallitas" element={<Settings />} />
+                <Route path="/ujfoglalas" element={<CreateBooking />} />
+
 
             </Route>
         </Routes>

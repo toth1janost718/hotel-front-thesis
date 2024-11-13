@@ -63,5 +63,8 @@
     height: 40px;
 }
 
+.occupied {
+    background-color: green;
+}
 
 

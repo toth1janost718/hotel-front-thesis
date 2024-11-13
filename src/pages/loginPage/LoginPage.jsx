@@ -3,6 +3,7 @@ import loginPageCSS from './LoginPage.module.css';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import config from "../../../config.js";
 
 function LoginPage() {
     useEffect(() => {
@@ -37,7 +38,7 @@ function LoginPage() {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5172/api/UserLogin/login", {
+            const response = await fetch(`${config.hrApiBaseUrl}/api/UserLogin/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

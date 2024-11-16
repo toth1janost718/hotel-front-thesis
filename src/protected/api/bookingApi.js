@@ -1,24 +1,18 @@
 import config from '../../../config.js';
 
-export const fetchRooms = async () => {
+const API_BASE_URL = `${config.bookingApiBaseUrl}/api/filters`; // Használjuk a bookingApiBaseUrl-t
+
+// Szobák státuszának lekérése adott dátumra
+export const fetchRoomStatuses = async (date = "today") => {
     try {
-        const response = await fetch(`${config.bookingApiBaseUrl}/api/Room`);
+        const response = await fetch(`${API_BASE_URL}/roomstatus/${date}`);
+        if (!response.ok) {
+            throw new Error("Hiba történt az API hívás során.");
+        }
         return await response.json();
     } catch (error) {
-        console.error("Hiba történt a szobák adatainak lekérésekor:", error);
+        console.error("API hívási hiba:", error);
         throw error;
     }
 };
-
-export const fetchRoomStatusForDay = async (date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    try {
-        const response = await fetch(`${config.bookingApiBaseUrl}/api/RoomStatus/RoomBookingsForDay?date=${formattedDate}`);
-        return await response.json();
-    } catch (error) {
-        console.error("Hiba történt a szobastátusz adatainak lekérésekor:", error);
-        throw error;
-    }
-};
-
 

@@ -1,117 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import bookingStyles from "./Booking.module.css";
-import { fetchRooms, fetchRoomStatusForDay } from '../../api/bookingApi';
-import { getStartOfWeek, getWeekDays, formatDateRange } from '../../utils/dateUtils';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Navigáció
+import { fetchRoomStatuses } from "../../api/bookingApi";
+import styles from "./Booking.module.css";
 
-function Booking() {
-    const navigate = useNavigate();
-    const [currentDate, setCurrentDate] = useState(getStartOfWeek(new Date()));
+const Booking = () => {
     const [rooms, setRooms] = useState([]);
-    const [occupiedRooms, setOccupiedRooms] = useState([]);
-    const [stats, setStats] = useState({ foglalt: 0, szabad: 0 });
+    const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+    const navigate = useNavigate();
 
-    const handleNewBooking = () => {
-        navigate('/ujfoglalas');
-    };
-
-    // Szobák lekérdezése (összes szoba)
     useEffect(() => {
-        fetchRooms()
-            .then(setRooms)
-            .catch((error) => console.error("Hiba történt a szobák adatainak lekérésekor:", error));
-    }, []);
+        const getRoomStatuses = async () => {
+            try {
+                const data = await fetchRoomStatuses(
+                    date === new Date().toISOString().split("T")[0] ? "today" : date
+                );
+                setRooms(data);
+            } catch (error) {
+                console.error("Hiba az API hívás során:", error);
+            }
+        };
 
-    // Napi foglaltsági adatok lekérdezése és statisztikai mezők frissítése
-    useEffect(() => {
-        fetchRoomStatusForDay(currentDate)
-            .then((data) => {
-                setOccupiedRooms(data.occupiedRooms || []);
-                const foglalt = data.occupiedRooms ? data.occupiedRooms.length : 0;
-                const szabad = data.availableRooms ? data.availableRooms.length : 0;
-                setStats({ foglalt, szabad });
-            })
-            .catch((error) => console.error("Hiba történt a szobastátusz adatainak lekérésekor:", error));
-    }, [currentDate]);
+        getRoomStatuses();
+    }, [date]);
 
-    const handleNextWeek = () => {
-        const nextWeek = new Date(currentDate);
-        nextWeek.setDate(currentDate.getDate() + 7);
-        setCurrentDate(nextWeek);
+    const formatRoomNumber = (roomNumber) => {
+        return roomNumber.toString().padStart(3, "0");
     };
 
-    const handlePreviousWeek = () => {
-        const previousWeek = new Date(currentDate);
-        previousWeek.setDate(currentDate.getDate() - 7);
-        setCurrentDate(previousWeek);
+    const handleRoomClick = (room) => {
+        if (room.status === "Szabad") {
+            navigate("/ujfoglalas");
+        }
     };
-
-    const year = currentDate.getFullYear();
-    const weekDays = getWeekDays(currentDate);
-    const formattedDateRange = formatDateRange(weekDays[0], weekDays[6]);
 
     return (
-        <div className={bookingStyles['booking-content']}>
-            <div className={`${bookingStyles['header']} d-flex align-items-center justify-content-between`}>
-                <Button variant="success" onClick={handleNewBooking} style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }}>
-                    Új foglalás
-                </Button>
-
-                <div className="d-flex align-items-center">
-                    <Button variant="primary" className="me-2" style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }} onClick={handlePreviousWeek}>
-                        Előző hét
-                    </Button>
-                    <div className="text-center ms-3">
-                        <div className={bookingStyles['year']}>{year}</div>
-                        <div>{formattedDateRange}</div>
+        <div className={styles.bookingPageContent}>
+            <div className={styles.bookingHeader}>
+                <h1 className={styles.bookingTitle}>Szoba Státusz</h1>
+                <div className={styles.datePickers}>
+                    <div className={styles.datePickerContainer}>
+                        <label htmlFor="startDate" className={styles.dateLabel}>Kezdet</label>
+                        <input
+                            id="startDate"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className={styles.bookingDatePicker}
+                        />
                     </div>
-                    <Button variant="primary" className="ms-3" style={{ width: '180px', whiteSpace: 'nowrap', textAlign: 'center' }} onClick={handleNextWeek}>
-                        Következő hét
-                    </Button>
-                </div>
-
-                <div className="d-flex align-items-center ms-3">
-                    <div className={`${bookingStyles['summary-card']} text-center me-3`}>
-                        <div>🛌</div>
-                        <div>Foglalt</div>
-                        <div className="text-primary">{stats.foglalt}</div>
-                    </div>
-                    <div className={`${bookingStyles['summary-card']} text-center`}>
-                        <div>🛏️</div>
-                        <div>Szabad</div>
-                        <div className="text-success">{stats.szabad}</div>
+                    <div className={styles.datePickerContainer}>
+                        <label htmlFor="endDate" className={styles.dateLabel}>Vége</label>
+                        <input
+                            id="endDate"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className={styles.bookingDatePicker}
+                        />
                     </div>
                 </div>
             </div>
 
-            <div className={bookingStyles['calendar-table']}>
-                <div className={bookingStyles['calendar-header']}>
-                    <div className={bookingStyles['room-label']}>Szobaszám</div>
-                    {weekDays.map((day, index) => (
-                        <div key={index} className={bookingStyles['day-header']}>
-                            {day.toLocaleDateString('hu-HU', { weekday: 'short', day: 'numeric' })}
+            <div className={styles.bookingRoomsGrid}>
+                {rooms.length > 0 ? (
+                    rooms.map((room) => (
+                        <div
+                            key={room.roomId}
+                            className={`${styles.bookingRoomCard} ${
+                                room.status === "Foglalt" ? styles.disabledRoom : ""
+                            }`}
+                            onClick={() => handleRoomClick(room)}
+                        >
+                            <h3>Szoba {formatRoomNumber(room.roomNumber)}</h3>
+                            <div
+                                className={`${styles.bookingStatusBox} ${
+                                    room.status === "Szabad"
+                                        ? styles.bookingFree
+                                        : styles.bookingOccupied
+                                }`}
+                            >
+                                {room.status}
+                            </div>
                         </div>
-                    ))}
-                </div>
-
-                {rooms.map((room) => (
-                    <div key={room.roomId} className={bookingStyles['room-row']}>
-                        <div className={bookingStyles['room-number']}>{room.roomNumber}</div>
-                        {weekDays.map((day, index) => {
-                            const isOccupied = occupiedRooms.some((r) => r.roomId === room.roomId);
-                            return (
-                                <div
-                                    key={index}
-                                    className={`${bookingStyles['empty-cell']} ${isOccupied ? bookingStyles['occupied'] : ''}`}
-                                ></div>
-                            );
-                        })}
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p>Nincsenek elérhető szobák!</p>
+                )}
             </div>
         </div>
     );
-}
+};
 
 export default Booking;

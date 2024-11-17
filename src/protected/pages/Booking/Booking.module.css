@@ -8,42 +8,36 @@
 
 .bookingHeader {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    margin-bottom: 30px;
+    position: relative;
 }
 
 .bookingTitle {
     font-size: 24px;
     font-weight: bold;
     margin: 0;
-
+    text-align: center;
 }
 
-.datePickers {
-    display: flex;
-    gap: 18px;
-    flex-wrap: wrap;
-}
-
-.datePickerContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.dateLabel {
-    font-size: 13px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.bookingDatePicker {
-    padding: 7px;
-    font-size: 13px;
-    border: 1px solid #ccc;
+.newBookingButton {
+    position: absolute;
+    left: 0;
+    background-color: green;
+    color: white;
+    border: none;
     border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.newBookingButton:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 
 .bookingRoomsGrid {
@@ -98,4 +92,32 @@
 
 .bookingOccupied {
     background-color: red;
+}
+
+.dateDisplay {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    position: absolute;
+    right: 20px;
+    top: 0;
+}
+
+.currentDate {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+}
+
+.dateButton {
+    font-size: 18px;
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.dateButton:hover {
+    color: #0056b3;
 }

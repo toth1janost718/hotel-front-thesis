@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Navigáció
+import { useNavigate } from "react-router-dom";
 import { fetchRoomStatuses } from "../../api/bookingApi";
 import styles from "./Booking.module.css";
 
+
+const formatDate = (date) => {
+    const months = [
+        "Január", "Február", "Március", "Április", "Május", "Június",
+        "Július", "Augusztus", "Szeptember", "Október", "November", "December"
+    ];
+    const days = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
+    const d = new Date(date);
+    return `${d.getFullYear()}. ${months[d.getMonth()]} ${d.getDate()}. ${days[d.getDay()]}`;
+};
+
 const Booking = () => {
     const [rooms, setRooms] = useState([]);
-    const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+    const [date, setDate] = useState(new Date());
     const navigate = useNavigate();
 
     useEffect(() => {
         const getRoomStatuses = async () => {
             try {
-                const data = await fetchRoomStatuses(
-                    date === new Date().toISOString().split("T")[0] ? "today" : date
-                );
+                const formattedDate = date.toISOString().split("T")[0];
+                const data = await fetchRoomStatuses(formattedDate);
                 setRooms(data);
             } catch (error) {
                 console.error("Hiba az API hívás során:", error);
@@ -22,6 +32,14 @@ const Booking = () => {
 
         getRoomStatuses();
     }, [date]);
+
+    const handleNextDay = () => {
+        setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() + 1)));
+    };
+
+    const handlePreviousDay = () => {
+        setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() - 1)));
+    };
 
     const formatRoomNumber = (roomNumber) => {
         return roomNumber.toString().padStart(3, "0");
@@ -33,34 +51,34 @@ const Booking = () => {
         }
     };
 
+    const handleNewBooking = () => {
+        navigate("/ujfoglalas"); // Navigálás az "Új foglalás" oldalra
+    };
+
     return (
         <div className={styles.bookingPageContent}>
             <div className={styles.bookingHeader}>
+                {/* Új foglalás gomb */}
+                <button className={styles.newBookingButton} onClick={handleNewBooking}>
+                    Új foglalás
+                </button>
+
+                {/* Cím középre */}
                 <h1 className={styles.bookingTitle}>Szoba Státusz</h1>
-                <div className={styles.datePickers}>
-                    <div className={styles.datePickerContainer}>
-                        <label htmlFor="startDate" className={styles.dateLabel}>Kezdet</label>
-                        <input
-                            id="startDate"
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className={styles.bookingDatePicker}
-                        />
-                    </div>
-                    <div className={styles.datePickerContainer}>
-                        <label htmlFor="endDate" className={styles.dateLabel}>Vége</label>
-                        <input
-                            id="endDate"
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            className={styles.bookingDatePicker}
-                        />
-                    </div>
+
+                {/* Dátum választás */}
+                <div className={styles.dateDisplay}>
+                    <span className={styles.dateButton} onClick={handlePreviousDay}>
+                        &#x25C0;
+                    </span>
+                    <span className={styles.currentDate}>{formatDate(date)}</span>
+                    <span className={styles.dateButton} onClick={handleNextDay}>
+                        &#x25B6;
+                    </span>
                 </div>
             </div>
 
+            {/* Szobák megjelenítése */}
             <div className={styles.bookingRoomsGrid}>
                 {rooms.length > 0 ? (
                     rooms.map((room) => (

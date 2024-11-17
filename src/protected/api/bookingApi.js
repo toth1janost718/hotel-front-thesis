@@ -1,11 +1,17 @@
 import config from '../../../config.js';
 
-const API_BASE_URL = `${config.bookingApiBaseUrl}/api/filters`; // Használjuk a bookingApiBaseUrl-t
+const formatDateForApi = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}.${month}.${day}`; // YYYY.MM.DD formátum
+};
 
-// Szobák státuszának lekérése adott dátumra
-export const fetchRoomStatuses = async (date = "today") => {
+export const fetchRoomStatuses = async (date) => {
+    const formattedDate = formatDateForApi(date); // Formázott dátum
     try {
-        const response = await fetch(`${API_BASE_URL}/roomstatus/${date}`);
+        const response = await fetch(`${config.bookingApiBaseUrl}/api/filters/roomstatus/${formattedDate}`);
         if (!response.ok) {
             throw new Error("Hiba történt az API hívás során.");
         }
@@ -15,4 +21,6 @@ export const fetchRoomStatuses = async (date = "today") => {
         throw error;
     }
 };
+
+
 

@@ -52,21 +52,21 @@ const Booking = () => {
     };
 
     const handleNewBooking = () => {
-        navigate("/ujfoglalas"); // Navigálás az "Új foglalás" oldalra
+        navigate("/ujfoglalas");
     };
 
     return (
         <div className={styles.bookingPageContent}>
             <div className={styles.bookingHeader}>
-                {/* Új foglalás gomb */}
+
                 <button className={styles.newBookingButton} onClick={handleNewBooking}>
                     Új foglalás
                 </button>
 
-                {/* Cím középre */}
+
                 <h1 className={styles.bookingTitle}>Szoba Státusz</h1>
 
-                {/* Dátum választás */}
+
                 <div className={styles.dateDisplay}>
                     <span className={styles.dateButton} onClick={handlePreviousDay}>
                         &#x25C0;

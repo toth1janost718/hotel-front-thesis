@@ -1,73 +1,171 @@
+
 .restaurant-content {
     margin-left: 250px;
     padding: 20px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    background: url('src/protected/assets/restaurantImgs/food_back.jpg') no-repeat center center;
+    background-size: cover;
 }
 
-.container {
+
+.restaurant-container {
     text-align: center;
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+
 }
 
-.title {
-    font-size: 24px;
+.restaurant-title {
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.services {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 20px;
-}
-
-.serviceItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 14px;
+    margin-bottom: 40px;
     color: #333;
 }
 
-.iconGrid {
+
+.restaurant-iconGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 20px;
     justify-content: center;
     padding: 10px;
 }
 
-.roomIcon {
+
+.restaurant-roomIcon {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease;
 }
 
-.icon {
-    width: 50px;
-    height: 50px;
+.restaurant-roomIcon:hover {
+    transform: scale(1.05);
+
+}
+.restaurant-icon {
+    width: 100px;
+    height:100px;
     background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background-color 0.3s ease;
     cursor: pointer;
 }
 
-.roomNumber {
-    margin-top: 5px;
-    font-size: 14px;
+.restaurant-icon:hover {
+    transform: scale(1.1);
+    background-color: #f7f7f7;
+}
+
+
+.restaurant-roomNumber {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    text-align: left;
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
     color: #333;
 }
 
 
-.breakfast {
-    background-color: orange;
+.modal label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
 }
 
-.halfBoard {
-    background: linear-gradient(to right, orange 50%, green 50%);
+
+.modal select {
+    flex: 1;
+    max-width: 250px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #f9f9f9;
 }
 
-.fullBoard {
-    background-color: green;
+
+.modal input[name="quantity"] {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: right;
+}
+
+
+.modal p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+.modal button {
+    width: 48%;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.modal button[type="button"] {
+    background: #dc3545;
+}
+
+.modal button:hover {
+    opacity: 0.9;
+}
+
+
+.modal .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }

@@ -1,12 +1,12 @@
-import homeIcon from '../assets/iconImages/home.svg';
-import bookingIcon from '../assets/iconImages/booking.svg';
-import restaurantIcon from '../assets/iconImages/restaurant.svg';
-import accountantIcon from '../assets/iconImages/accountant.svg';
-import employeesIcon from '../assets/iconImages/employees.svg';
-import tripIcon from '../assets/iconImages/vacation.svg';
-import salaryIcon from '../assets/iconImages/salary.svg';
-import settingsIcon from '../assets/iconImages/settings.svg';
-import exitIcon from '../assets/iconImages/exit.svg';
+import homeIcon from '../assets/iconsImgs/home.svg';
+import bookingIcon from '../assets/iconsImgs/booking.svg';
+import restaurantIcon from '../assets/iconsImgs/restaurant.svg';
+import accountantIcon from '../assets/iconsImgs/accountant.svg';
+import employeesIcon from '../assets/iconsImgs/employees.svg';
+import tripIcon from '../assets/iconsImgs/vacation.svg';
+import salaryIcon from '../assets/iconsImgs/salary.svg';
+import settingsIcon from '../assets/iconsImgs/settings.svg';
+import exitIcon from '../assets/iconsImgs/exit.svg';
 
 export const iconsImgs={
 

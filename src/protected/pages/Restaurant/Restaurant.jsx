@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import restaurantStyles from './Restaurant.module.css';
 import config from '../../../../config.js';
+import TableIcon from '../../assets/restaurantImgs/dining-table.png';
 
 function Restaurant() {
     const [rooms, setRooms] = useState([]);
-    const [mealPlans, setMealPlans] = useState({});
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
-    // Szobák adatainak lekérése az API-ból
+    // Szobák adatainak lekérése
     useEffect(() => {
         fetch(`${config.bookingApiBaseUrl}/api/Room`)
             .then((response) => response.json())
@@ -18,67 +20,74 @@ function Restaurant() {
             });
     }, []);
 
-    // Étkezési tervek lekérése a BookingManage API-ból
-    useEffect(() => {
-        fetch(`http://localhost:5086/api/BookingManage`)
-            .then((response) => response.json())
-            .then((data) => {
-                const mealPlanMapping = {};
-                data.forEach((booking) => {
-                    const roomId = booking.roomId;
-                    if (booking.mealPlan) {
 
-                        const mealOption = booking.mealPlan.mealOption;
-                        mealPlanMapping[roomId] = mealOption;
-                    }
-                });
-                setMealPlans(mealPlanMapping);
-            })
-            .catch((error) => {
-                console.error("Hiba történt a foglalási adatok lekérésekor:", error);
-            });
-    }, []);
+    const handleRoomClick = (roomId) => {
+        setSelectedRoom(roomId);
+        setShowModal(true);
+    };
 
-
-    const getRoomColor = (roomId) => {
-        const mealOption = mealPlans[roomId];
-        if (!mealOption) return 'white';
-
-        if (mealOption === "Reggeli") return restaurantStyles.breakfast;
-        if (mealOption === "Félpanzió") return restaurantStyles.halfBoard;
-        if (mealOption === "Teljes ellátás") return restaurantStyles.fullBoard;
-
-        return 'white';
+    // Modál bezárása
+    const closeModal = () => {
+        setSelectedRoom(null);
+        setShowModal(false);
     };
 
     return (
         <div className={restaurantStyles['restaurant-content']}>
-            <div className={restaurantStyles.container}>
-                <h2 className={restaurantStyles.title}>Éttermi fogyasztás rögzítése</h2>
+            <div className={restaurantStyles['restaurant-container']}>
+                <h2 className={restaurantStyles['restaurant-title']}>Éttermi fogyasztás rögzítése</h2>
 
-                <div className={restaurantStyles.services}>
-                    <div className={restaurantStyles.serviceItem}>
-                        <div className={`${restaurantStyles.icon} ${restaurantStyles.breakfast}`}></div>
-                        <span>Reggeli</span>
-                    </div>
-                    <div className={restaurantStyles.serviceItem}>
-                        <div className={`${restaurantStyles.icon} ${restaurantStyles.halfBoard}`}></div>
-                        <span>Félpanzió</span>
-                    </div>
-                    <div className={restaurantStyles.serviceItem}>
-                        <div className={`${restaurantStyles.icon} ${restaurantStyles.fullBoard}`}></div>
-                        <span>Teljes ellátás</span>
-                    </div>
-                </div>
-
-                <div className={restaurantStyles.iconGrid}>
+                <div className={restaurantStyles['restaurant-iconGrid']}>
                     {rooms.map((room) => (
-                        <div key={room.roomId} className={restaurantStyles.roomIcon}>
-                            <div className={`${restaurantStyles.icon} ${getRoomColor(room.roomId)}`}></div>
-                            <span className={restaurantStyles.roomNumber}>{room.roomNumber}</span>
+                        <div
+                            key={room.roomId}
+                            className={restaurantStyles['restaurant-roomIcon']}
+                            onClick={() => handleRoomClick(room.roomId)}
+                        >
+                            <img
+                                src={TableIcon}
+                                alt="Dining Table Icon"
+                                className={restaurantStyles['restaurant-icon']}
+                            />
+                            <span className={restaurantStyles['restaurant-roomNumber']}>
+                                {room.roomNumber}
+                            </span>
                         </div>
                     ))}
                 </div>
+
+                {showModal && (
+                    <div className={restaurantStyles['modal-overlay']} onClick={closeModal}>
+                        <div
+                            className={restaurantStyles['modal']}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h3>Rendelés felvitel</h3>
+                            <p>Szobaszám: {selectedRoom}</p>
+                            <form>
+                                <label>
+                                    Étel/Ital:
+                                    <select name="foodOrDrink" required>
+                                        <option value="" disabled selected>Válassz egy lehetőséget</option>
+                                        <option value="1">Pizza</option>
+                                        <option value="2">Kóla</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    Mennyiség:
+                                    <input type="number" name="quantity" min="1" max="99" required/>
+                                </label>
+                                <p>
+                                    <strong>Végösszeg:</strong> 0 Ft
+                                </p>
+                                <div className="button-group">
+                                    <button type="submit">Mentés</button>
+                                    <button type="button" onClick={closeModal}>Mégse</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

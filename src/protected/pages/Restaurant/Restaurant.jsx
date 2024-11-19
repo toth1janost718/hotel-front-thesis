@@ -35,7 +35,7 @@ function Restaurant() {
     return (
         <div className={restaurantStyles['restaurant-content']}>
             <div className={restaurantStyles['restaurant-container']}>
-                <h2 className={restaurantStyles['restaurant-title']}>Éttermi fogyasztás rögzítése</h2>
+                <h2 className={restaurantStyles['restaurant-title']}>Éttermi fogyasztás</h2>
 
                 <div className={restaurantStyles['restaurant-iconGrid']}>
                     {rooms.map((room) => (

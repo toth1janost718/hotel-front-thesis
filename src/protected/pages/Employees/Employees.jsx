@@ -4,10 +4,11 @@ import employeeStyles from "./Employees.module.css";
 
 function Employees() {
     const [employees, setEmployees] = useState([]);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
     const [filters, setFilters] = useState({
-        lastName: "",
-        firstName: "",
-        positionName: "",
+        searchTerm: "",
         scheduleStatus: "",
     });
     const [error, setError] = useState("");
@@ -25,21 +26,33 @@ function Employees() {
         fetchEmployees();
     }, []);
 
-    // Szűrt adatok
-    const filteredEmployees = employees.filter((employee) => {
-        const matchesLastName = employee.lastName
-            .toLowerCase()
-            .includes(filters.lastName.toLowerCase());
-        const matchesFirstName = employee.firstName
-            .toLowerCase()
-            .includes(filters.firstName.toLowerCase());
-        const matchesPositionName = employee.positionName
-            .toLowerCase()
-            .includes(filters.positionName.toLowerCase());
-        const matchesScheduleStatus =
-            filters.scheduleStatus === "" || employee.scheduleStatus === filters.scheduleStatus;
+    const openEmployeeModal = (employee) => {
+        setSelectedEmployee(employee);
+        setIsEmployeeModalOpen(true);
+    };
 
-        return matchesLastName && matchesFirstName && matchesPositionName && matchesScheduleStatus;
+    const closeEmployeeModal = () => {
+        setSelectedEmployee(null);
+        setIsEmployeeModalOpen(false);
+    };
+
+    const openScheduleModal = () => {
+        setIsScheduleModalOpen(true);
+    };
+
+    const closeScheduleModal = () => {
+        setIsScheduleModalOpen(false);
+    };
+
+    const filteredEmployees = employees.filter((employee) => {
+        const matchesSearchTerm =
+            employee.lastName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+            employee.firstName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+            employee.positionName.toLowerCase().includes(filters.searchTerm.toLowerCase());
+        const matchesScheduleStatus =
+            filters.scheduleStatus === "" || employee.scheduleStatus === parseInt(filters.scheduleStatus);
+
+        return matchesSearchTerm && matchesScheduleStatus;
     });
 
     const handleFilterChange = (e) => {
@@ -51,43 +64,34 @@ function Employees() {
     };
 
     return (
-        <div className={employeeStyles.employeesPageContent}>
+        <div className={`${employeeStyles.customBody} ${employeeStyles.employeesPageContent}`}>
             <div className={employeeStyles.employeesContainer}>
-                <h1 className={employeeStyles.employeesTitle}>Alkalmazottak</h1>
+                <div className={employeeStyles.headerContainer}>
+                    <div className={employeeStyles.titleAndFilter}>
+                        <h1 className={employeeStyles.employeesTitle}>Alkalmazottak</h1>
+                        <input
+                            type="text"
+                            name="searchTerm"
+                            placeholder="Keresés (név, pozíció)"
+                            value={filters.searchTerm}
+                            onChange={handleFilterChange}
+                            className={employeeStyles.generalFilterInput}
+                        />
+                    </div>
+                    <button
+                        className={employeeStyles.addButton}
+                        onClick={openScheduleModal}
+                    >
+                        Beosztás rögzítése
+                    </button>
+                </div>
                 {error && <p className={employeeStyles.employeesError}>{error}</p>}
                 <table className={employeeStyles.employeesTable}>
                     <thead>
                     <tr>
-                        <th>
-                            <input
-                                type="text"
-                                name="lastName"
-                                placeholder="Szűrés vezetéknévre"
-                                value={filters.lastName}
-                                onChange={handleFilterChange}
-                                className={employeeStyles.filterInput}
-                            />
-                        </th>
-                        <th>
-                            <input
-                                type="text"
-                                name="firstName"
-                                placeholder="Szűrés keresztnévre"
-                                value={filters.firstName}
-                                onChange={handleFilterChange}
-                                className={employeeStyles.filterInput}
-                            />
-                        </th>
-                        <th>
-                            <input
-                                type="text"
-                                name="positionName"
-                                placeholder="Szűrés pozícióra"
-                                value={filters.positionName}
-                                onChange={handleFilterChange}
-                                className={employeeStyles.filterInput}
-                            />
-                        </th>
+                        <th>Vezetéknév</th>
+                        <th>Keresztnév</th>
+                        <th>Pozíció</th>
                         <th>
                             <select
                                 name="scheduleStatus"
@@ -96,17 +100,11 @@ function Employees() {
                                 className={employeeStyles.filterSelect}
                             >
                                 <option value="">Összes</option>
-                                <option value="Working">Munkában</option>
-                                <option value="DayOff">Szabadnap</option>
-                                <option value="OnLeave">Szabadságon</option>
+                                <option value="1">Munkában</option>
+                                <option value="2">Szabadnap</option>
+                                <option value="3">Szabadságon</option>
                             </select>
                         </th>
-                    </tr>
-                    <tr>
-                        <th>Vezetéknév</th>
-                        <th>Keresztnév</th>
-                        <th>Pozíció</th>
-                        <th>Státusz</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -118,22 +116,54 @@ function Employees() {
                             <td>
                                 <button
                                     className={`${employeeStyles.employeesStatusButton} ${
-                                        employee.scheduleStatus === "Working"
+                                        employee.scheduleStatus === 1
                                             ? employeeStyles.employeesWorking
-                                            : employee.scheduleStatus === "DayOff"
+                                            : employee.scheduleStatus === 2
                                                 ? employeeStyles.employeesDayOff
                                                 : employeeStyles.employeesOnLeave
                                     }`}
+                                    onClick={() => openEmployeeModal(employee)}
                                 >
-                                    {employee.scheduleStatus === "Working" && "Munkában"}
-                                    {employee.scheduleStatus === "DayOff" && "Szabadnap"}
-                                    {employee.scheduleStatus === "OnLeave" && "Szabadságon"}
+                                    {employee.scheduleStatus === 1 && "Munkában"}
+                                    {employee.scheduleStatus === 2 && "Szabadnap"}
+                                    {employee.scheduleStatus === 3 && "Szabadságon"}
                                 </button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+
+
+                {isEmployeeModalOpen && (
+                    <div className={employeeStyles.modalOverlay}>
+                        <div className={employeeStyles.modal}>
+                            <h3>{selectedEmployee.firstName} {selectedEmployee.lastName}</h3>
+                            <p>Pozíció: {selectedEmployee.positionName}</p>
+                            <p>Státusz:
+                                {selectedEmployee.scheduleStatus === 1 && "Munkában"}
+                                {selectedEmployee.scheduleStatus === 2 && "Szabadnap"}
+                                {selectedEmployee.scheduleStatus === 3 && "Szabadságon"}
+                            </p>
+                            <button onClick={closeEmployeeModal} className={employeeStyles.closeModalButton}>
+                                Bezárás
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+
+                {isScheduleModalOpen && (
+                    <div className={employeeStyles.modalOverlay}>
+                        <div className={employeeStyles.modal}>
+                            <h3>Beosztás rögzítése</h3>
+                            <p>Itt lehet a beosztást rögzíteni.</p>
+                            <button onClick={closeScheduleModal} className={employeeStyles.closeModalButton}>
+                                Bezárás
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

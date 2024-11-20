@@ -1,3 +1,4 @@
+
 .customBody {
     height: 100%;
     margin: 0;
@@ -17,6 +18,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 .headerContainer {
     display: flex;
     justify-content: space-between;
@@ -28,7 +30,6 @@
     font-size: 28px;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 15px;
 }
 
 .generalFilterInput {
@@ -37,11 +38,10 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-right: 20px;
-    margin-top: 10px;
     width: 300px;
-    box-sizing: border-box;
     background-color: #8b4513;
     color: white;
+    box-sizing: border-box;
 }
 
 .generalFilterInput::placeholder {
@@ -65,13 +65,12 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     white-space: nowrap;
-    min-width: 220px;
-    text-align: center;
 }
 
 .addButton:hover {
     background-color: #6e3510;
 }
+
 
 .employeesTable {
     width: 100%;
@@ -82,7 +81,7 @@
 
 .employeesTable th {
     background-color: #8b5a2b;
-    color: black;
+    color: white;
     font-weight: bold;
     border: 1px solid #ddd;
     padding: 10px;
@@ -92,9 +91,7 @@
 .employeesTable td {
     border: 1px solid #ddd;
     padding: 10px;
-    text-align: left;
     font-size: 16px;
-    font-weight: bold;
     color: #ffffff;
     background-color: rgba(255, 255, 255, 0.2);
 }
@@ -110,13 +107,12 @@
 .filterSelect {
     width: 100%;
     padding: 5px 10px;
-    margin: 0;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
-    box-sizing: border-box;
     background-color: #8b4513;
     color: white;
+    box-sizing: border-box;
 }
 
 .filterSelect:focus {
@@ -133,8 +129,6 @@
     font-weight: bold;
     color: white;
     text-align: center;
-    width: auto;
-    max-width: 150px;
     display: block;
     margin: 0 auto;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -167,6 +161,7 @@
     transform: scale(1.05);
 }
 
+
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -184,10 +179,10 @@
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 600px; /* Növelt szélesség */
+    width: 600px;
     max-width: 90%;
-    max-height: 80%; /* Magasság korlátozása */
-    overflow-y: auto; /* Görgetősáv, ha a tartalom túllóg */
+    max-height: 80%;
+    overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1001;
     text-align: center;
@@ -200,28 +195,25 @@
     margin-bottom: 20px;
 }
 
+
 .scheduleTable {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.scheduleTable th,
-.scheduleTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
-
 .scheduleTable th {
     background-color: #8b5a2b;
     color: white;
     font-weight: bold;
+    padding: 10px;
 }
 
 .scheduleTable td {
-    background-color: rgba(139, 69, 19, 0.1);
+    border: 1px solid #ddd;
+    padding: 8px;
     color: black;
+    background-color: rgba(139, 69, 19, 0.1);
 }
 
 .scheduleTable tr:nth-child(even) {
@@ -232,6 +224,7 @@
     background-color: rgba(139, 69, 19, 0.3);
 }
 
+
 .closeModalButton {
     background: #dc3545;
     color: white;
@@ -240,6 +233,7 @@
     padding: 10px 15px;
     font-size: 14px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .closeModalButton:hover {

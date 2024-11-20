@@ -14,19 +14,22 @@ const getAllEmployeeSchedules = async () => {
     }
 };
 
-const getEmployeeCurrentMonthSchedule = async (userId) => {
+export const getEmployeeCurrentMonthSchedule = async (employeeId) => {
+
+
     try {
-        const response = await fetch(`${config.hrApiBaseUrl}/api/Employee/${userId}/current-schedule`);
+        const response = await fetch(`${config.hrApiBaseUrl}/api/Employee/${employeeId}/schedule`);
         if (!response.ok) {
-            throw new Error(`Nem sikerült lekérni az alkalmazott (${userId}) aktuális havi beosztását.`);
+            throw new Error("Nem sikerült lekérni az alkalmazott havi beosztását.");
         }
         return await response.json();
     } catch (error) {
-        console.error("Hiba az alkalmazott aktuális havi beosztásának lekérésekor:", error);
+        console.error("Hiba az alkalmazott havi beosztásának lekérésekor:", error);
         throw error;
     }
 };
 
 
 
-export { getAllEmployeeSchedules ,getEmployeeCurrentMonthSchedule};
+
+export { getAllEmployeeSchedules };

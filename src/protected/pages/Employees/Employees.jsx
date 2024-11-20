@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getEmployeeSchedules } from "../../api/employeeApi.js";
+import { getAllEmployeeSchedules } from "../../api/employeeApi.js";
+import { getEmployeeCurrentMonthSchedule } from "../../api/employeeApi.js";
 import employeeStyles from "./Employees.module.css";
 
 function Employees() {
@@ -11,13 +12,16 @@ function Employees() {
         searchTerm: "",
         scheduleStatus: "",
     });
+    const  [monthlySchedule, setMonthlySchedule] = useState([]);
+
     const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchEmployees = async () => {
             try {
-                const data = await getEmployeeSchedules();
+                const data = await getAllEmployeeSchedules();
                 setEmployees(data);
+                // eslint-disable-next-line no-unused-vars
             } catch (error) {
                 setError("Nem sikerült lekérni az alkalmazottak adatait.");
             }
@@ -26,10 +30,26 @@ function Employees() {
         fetchEmployees();
     }, []);
 
-    const openEmployeeModal = (employee) => {
+    const openEmployeeModal = async (employee) => {
+        console.log("Selected Employee:", employee);
+        if (!employee || !employee.id) {
+            console.error("Hiányzik az alkalmazott ID.");
+            return;
+        }
         setSelectedEmployee(employee);
+
         setIsEmployeeModalOpen(true);
+
+        try {
+            const schedule = await getEmployeeCurrentMonthSchedule(employee.id);
+            setMonthlySchedule(schedule);
+        } catch (error) {
+            console.error("Hiba az alkalmazott havi beosztásának lekérésekor:", error);
+            setMonthlySchedule([]);
+        }
     };
+
+
 
     const closeEmployeeModal = () => {
         setSelectedEmployee(null);
@@ -127,6 +147,7 @@ function Employees() {
                                     {employee.scheduleStatus === 1 && "Munkában"}
                                     {employee.scheduleStatus === 2 && "Szabadnap"}
                                     {employee.scheduleStatus === 3 && "Szabadságon"}
+
                                 </button>
                             </td>
                         </tr>
@@ -135,22 +156,43 @@ function Employees() {
                 </table>
 
 
-                {isEmployeeModalOpen && (
+                {isEmployeeModalOpen && selectedEmployee && (
                     <div className={employeeStyles.modalOverlay}>
                         <div className={employeeStyles.modal}>
                             <h3>{selectedEmployee.firstName} {selectedEmployee.lastName}</h3>
                             <p>Pozíció: {selectedEmployee.positionName}</p>
-                            <p>Státusz:
-                                {selectedEmployee.scheduleStatus === 1 && "Munkában"}
-                                {selectedEmployee.scheduleStatus === 2 && "Szabadnap"}
-                                {selectedEmployee.scheduleStatus === 3 && "Szabadságon"}
-                            </p>
+                            <p>Beosztás: </p>
+                            <table className={employeeStyles.scheduleTable}>
+                                <thead>
+                                <tr>
+                                    <th>Dátum</th>
+                                    <th>Kezdés</th>
+                                    <th>Befejezés</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {monthlySchedule.length > 0 ? (
+                                    monthlySchedule.map((schedule, index) => (
+                                        <tr key={index}>
+                                            <td>{schedule.ShiftDate}</td>
+                                            <td>{schedule.ShiftStart}</td>
+                                            <td>{schedule.ShiftEnd}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3">Nincs beosztás az aktuális hónapra.</td>
+                                    </tr>
+                                )}
+                                </tbody>
+                            </table>
                             <button onClick={closeEmployeeModal} className={employeeStyles.closeModalButton}>
                                 Bezárás
                             </button>
                         </div>
                     </div>
                 )}
+
 
 
                 {isScheduleModalOpen && (

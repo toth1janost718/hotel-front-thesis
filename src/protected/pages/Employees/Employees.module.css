@@ -167,10 +167,6 @@
     transform: scale(1.05);
 }
 
-.employeesStatusButton:hover {
-    opacity: 0.9;
-}
-
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -188,16 +184,52 @@
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 400px;
+    width: 600px; /* Növelt szélesség */
     max-width: 90%;
+    max-height: 80%; /* Magasság korlátozása */
+    overflow-y: auto; /* Görgetősáv, ha a tartalom túllóg */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1001;
     text-align: center;
 }
 
 .modal h3 {
-    margin-top: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #8b4513;
     margin-bottom: 20px;
+}
+
+.scheduleTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.scheduleTable th,
+.scheduleTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.scheduleTable th {
+    background-color: #8b5a2b;
+    color: white;
+    font-weight: bold;
+}
+
+.scheduleTable td {
+    background-color: rgba(139, 69, 19, 0.1);
+    color: black;
+}
+
+.scheduleTable tr:nth-child(even) {
+    background-color: rgba(139, 69, 19, 0.1);
+}
+
+.scheduleTable tr:hover {
+    background-color: rgba(139, 69, 19, 0.3);
 }
 
 .closeModalButton {

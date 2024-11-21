@@ -44,7 +44,7 @@ function Employees() {
 
 
         if (!employee || !employee.id) {
-            console.error("Hiányzik az alkalmazott ID.");
+
             return;
         }
 
@@ -56,7 +56,7 @@ function Employees() {
 
             setMonthlySchedule(schedule);
         } catch (error) {
-            console.error("Hiba az alkalmazott havi beosztásának lekérésekor:", error);
+
             setMonthlySchedule([]);
         }
     };
@@ -164,17 +164,17 @@ function Employees() {
                     ))}
                     </tbody>
                 </table>
-
                 {isEmployeeModalOpen && selectedEmployee && (
                     <div className={employeeStyles.modalOverlay}>
                         <div className={employeeStyles.modal}>
                             <h3>{selectedEmployee.lastName} {selectedEmployee.firstName}</h3>
                             <p>Pozíció: {selectedEmployee.positionName}</p>
-                            <p>Munkanapok (a) {getCurrentMonthName()} hónapban</p>
+                            <p>Munkanapok ({getCurrentMonthName()} hónapban)</p>
                             <table className={employeeStyles.scheduleTable}>
                                 <thead>
                                 <tr>
                                     <th>Dátum</th>
+                                    <th>Státusz</th>
                                     <th>Kezdés</th>
                                     <th>Befejezés</th>
                                 </tr>
@@ -184,13 +184,20 @@ function Employees() {
                                     monthlySchedule.map((schedule, index) => (
                                         <tr key={index}>
                                             <td>{schedule.shiftDate}</td>
-                                            <td>{schedule.shiftStart}</td>
-                                            <td>{schedule.shiftEnd}</td>
+                                            <td>
+                                                {schedule.isLeave
+                                                    ? "Szabadság"
+                                                    : schedule.shiftStart && schedule.shiftEnd
+                                                        ? "Munkában"
+                                                        : "Szabadnap"}
+                                            </td>
+                                            <td>{schedule.shiftStart || "-"}</td>
+                                            <td>{schedule.shiftEnd || "-"}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="3">Nincs beosztás az aktuális hónapra.</td>
+                                        <td colSpan="4">Nincs beosztás az aktuális hónapra.</td>
                                     </tr>
                                 )}
                                 </tbody>

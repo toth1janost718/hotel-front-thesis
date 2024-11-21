@@ -179,8 +179,8 @@
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 600px;
-    max-width: 90%;
+    width: 700px;
+    max-width: 95%;
     max-height: 80%;
     overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -229,13 +229,50 @@
     background: #dc3545;
     color: white;
     border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    font-size: 14px;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .closeModalButton:hover {
-    background: #c82333;
+    background: #6e3510;;
+}
+
+status-working {
+    background-color: #a0522d;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+}
+
+.status-leave {
+    background-color: #deb887;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+}
+
+.status-dayoff {
+    background-color: #cd853f;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px;
+}
+
+.no-schedule {
+    color: #8b4513;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    background-color: rgba(139, 69, 19, 0.1);
+    border-radius: 5px;
 }

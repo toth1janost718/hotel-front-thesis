@@ -113,7 +113,7 @@ function Employees() {
                         className={employeeStyles.addButton}
                         onClick={openScheduleModal}
                     >
-                        Módosítás
+                        Rögzítés
                     </button>
                 </div>
                 {error && <p className={employeeStyles.employeesError}>{error}</p>}
@@ -203,10 +203,10 @@ function Employees() {
                 )}
 
                 {isScheduleModalOpen && (
-                    <div className={employeeStyles.modalOverlay}>
+                    <div className={`${employeeStyles.modalOverlay} ${employeeStyles.scheduleModal}`}>
                         <div className={employeeStyles.modal}>
-                            <h3>Módosítás</h3>
-                            <p>Itt lehet a beosztást rögzíteni.</p>
+                            <h3>Felvitel</h3>
+                            <p>A funkció fejlesztés alatt</p>
                             <button onClick={closeScheduleModal} className={employeeStyles.closeModalButton}>
                                 Bezárás
                             </button>

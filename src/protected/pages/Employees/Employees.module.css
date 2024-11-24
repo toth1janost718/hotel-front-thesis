@@ -239,3 +239,8 @@
 .closeModalButton:hover {
     background: #c82333;
 }
+.modalOverlay.scheduleModal .modal p {
+    color: red !important;
+    font-weight: bold !important;
+}
+

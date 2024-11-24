@@ -1,12 +1,22 @@
 import React from 'react';
-import "./CreateBooking.module.css"
-import createbookStyles from "../CreateBooking/CreateBooking.module.css";
+import "./CreateBooking.module.css";
+import createBookingStyles from "../CreateBooking/CreateBooking.module.css";
 
 function CreateBooking() {
-    return (<div className={createbookStyles['create-booking-content']}>
-        <h1>Létrehozó oldal</h1>
-        <p>Ez egy teszt szöveg, amely a Sidebar mellett jelenik meg.</p>
-    </div>)
+    return (
+        <div className={createBookingStyles['create-booking-content']}>
+            <div className={createBookingStyles['animated-wrapper']}>
+                <div className={createBookingStyles['logo-container']}>
+                    <div className={createBookingStyles['hotel-icon']}></div>
+                </div>
+                <h1 className={createBookingStyles['maintenance-title']}>Hamarosan</h1>
+                <p className={createBookingStyles['maintenance-text']}>
+                    A Moonlight Valley Hotel új oldalán dolgozunk. Kérjük, térjen vissza később!
+                </p>
+                <div className={createBookingStyles['loader']}></div>
+            </div>
+        </div>
+    );
 }
 
 export default CreateBooking;

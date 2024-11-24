@@ -276,3 +276,46 @@ status-working {
     background-color: rgba(139, 69, 19, 0.1);
     border-radius: 5px;
 }
+.editButton {
+    background: #ffc107;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.editButton:hover {
+    background-color: #e0a800;
+}
+
+.saveButton {
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+    background-color: #218838;
+}
+.timeInput {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+    width: 100px;
+    text-align: center;
+}
+
+.timeInput:focus {
+    outline: none;
+    border-color: #8b4513;
+    box-shadow: 0 0 5px rgba(139, 69, 19, 0.5);
+}

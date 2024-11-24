@@ -1,12 +1,10 @@
 import React from 'react';
-import accountantStyles from "./Accountant.module.css";
+
+import UnderMaintance from "../UnderMaintance/UnderMaintance.jsx";
 
 function Accountant() {
     return (
-        <div className={accountantStyles['accountant-content']}>
-            <h1>Számlázás oldal</h1>
-            <p>Ez egy teszt szöveg, amely a Sidebar mellett jelenik meg.</p>
-        </div>
+        <UnderMaintance />
     );
 }
 

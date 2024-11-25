@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getAllEmployeeSchedules, getEmployeeCurrentMonthSchedule } from "../../api/employeeApi.js";
+import {
+    getAllEmployeeSchedules,
+    getEmployeeCurrentMonthSchedule,
+    updateShiftInDatabase
+} from "../../api/employeeApi.js";
 import employeeStyles from "./Employees.module.css";
 
 function Employees() {
@@ -11,12 +15,55 @@ function Employees() {
         searchTerm: "",
         scheduleStatus: "",
     });
+    const saveShiftChanges = async (index) => {
+        const schedule = monthlySchedule[index];
+        const updatedShift = {
+            shiftDate: schedule.shiftDate,
+            shiftStart: schedule.shiftStart,
+            shiftEnd: schedule.shiftEnd,
+        };
+
+        try {
+            // API hívás a frissítéshez
+            await updateShiftInDatabase(selectedEmployee.id, updatedShift);
+
+            // Frissített adatok mentése a state-be
+            setMonthlySchedule((prevSchedule) => {
+                const updatedSchedule = [...prevSchedule];
+                updatedSchedule[index] = { ...updatedSchedule[index], isEditing: false };
+                return updatedSchedule;
+            });
+
+            setEditingIndex(null); // Kilépés szerkesztésből
+        } catch (error) {
+            console.error("Hiba a műszak mentésekor:", error);
+        }
+    };
+
+
+
+
     const [monthlySchedule, setMonthlySchedule] = useState([]);
     const [error, setError] = useState("");
     const getCurrentMonthName = () => {
         const date = new Date();
         return date.toLocaleString('hu-HU', { month: 'long' }); // Hónap neve magyarul
     };
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const enableEditing = (index) => {
+        setEditingIndex(index);
+    };
+
+    const handleEditChange = (index, field, value) => {
+        setMonthlySchedule((prevSchedule) => {
+            const updatedSchedule = [...prevSchedule];
+            updatedSchedule[index][field] = value;
+            return updatedSchedule;
+        });
+    };
+
+
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -40,11 +87,13 @@ function Employees() {
         fetchEmployees();
     }, []);
 
+
+
     const openEmployeeModal = async (employee) => {
 
 
         if (!employee || !employee.id) {
-            console.error("Hiányzik az alkalmazott ID.");
+
             return;
         }
 
@@ -56,7 +105,7 @@ function Employees() {
 
             setMonthlySchedule(schedule);
         } catch (error) {
-            console.error("Hiba az alkalmazott havi beosztásának lekérésekor:", error);
+
             setMonthlySchedule([]);
         }
     };
@@ -65,6 +114,10 @@ function Employees() {
     const closeEmployeeModal = () => {
         setSelectedEmployee(null);
         setIsEmployeeModalOpen(false);
+        setEditingIndex(null);
+        setMonthlySchedule((prevSchedule) =>
+            prevSchedule.map((schedule) => ({ ...schedule, isEditing: false }))
+        );
     };
 
     const openScheduleModal = () => {
@@ -164,36 +217,83 @@ function Employees() {
                     ))}
                     </tbody>
                 </table>
-
                 {isEmployeeModalOpen && selectedEmployee && (
                     <div className={employeeStyles.modalOverlay}>
                         <div className={employeeStyles.modal}>
                             <h3>{selectedEmployee.lastName} {selectedEmployee.firstName}</h3>
+
                             <p>Pozíció: {selectedEmployee.positionName}</p>
-                            <p>Munkanapok (a) {getCurrentMonthName()} hónapban</p>
+                            <p>Munkanapok ({getCurrentMonthName()} hónapban)</p>
                             <table className={employeeStyles.scheduleTable}>
                                 <thead>
                                 <tr>
                                     <th>Dátum</th>
+                                    <th>Státusz</th>
                                     <th>Kezdés</th>
                                     <th>Befejezés</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {monthlySchedule.length > 0 ? (
-                                    monthlySchedule.map((schedule, index) => (
-                                        <tr key={index}>
-                                            <td>{schedule.shiftDate}</td>
-                                            <td>{schedule.shiftStart}</td>
-                                            <td>{schedule.shiftEnd}</td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="3">Nincs beosztás az aktuális hónapra.</td>
+                                {monthlySchedule.map((schedule, index) => (
+                                    <tr key={index}>
+                                        <td>{schedule.shiftDate}</td>
+                                        <td>
+                                            {schedule.isLeave
+                                                ? "Szabadság"
+                                                : schedule.shiftStart && schedule.shiftEnd
+                                                    ? "Munkában"
+                                                    : "Szabadnap"}
+                                        </td>
+                                        <td>
+                                            {editingIndex === index ? (
+                                                <input
+                                                    type="time"
+                                                    value={schedule.shiftStart || ""}
+                                                    onChange={(e) =>
+                                                        handleEditChange(index, "shiftStart", e.target.value)
+                                                    }
+                                                    className={employeeStyles.timeInput}
+                                                />
+                                            ) : (
+                                                schedule.shiftStart || "-"
+                                            )}
+                                        </td>
+                                        <td>
+                                            {editingIndex === index ? (
+                                                <input
+                                                    type="time"
+                                                    value={schedule.shiftEnd || ""}
+                                                    onChange={(e) =>
+                                                        handleEditChange(index, "shiftEnd", e.target.value)
+                                                    }
+                                                    className={employeeStyles.timeInput}
+                                                />
+                                            ) : (
+                                                schedule.shiftEnd || "-"
+                                            )}
+                                        </td>
+                                        <td>
+                                            {editingIndex === index ? (
+                                                <button
+                                                    onClick={() => saveShiftChanges(index)}
+                                                    className={employeeStyles.saveButton}
+                                                >
+                                                    ✔️
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => enableEditing(index)}
+                                                    className={employeeStyles.editButton}
+                                                >
+                                                    ✏️
+                                                </button>
+                                            )}
+                                        </td>
                                     </tr>
-                                )}
+                                ))}
                                 </tbody>
+
+
                             </table>
                             <button onClick={closeEmployeeModal} className={employeeStyles.closeModalButton}>
                                 Bezárás

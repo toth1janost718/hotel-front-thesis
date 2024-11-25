@@ -1,12 +1,11 @@
 import React from 'react';
-import "./CreateBooking.module.css"
-import createbookStyles from "../CreateBooking/CreateBooking.module.css";
+import UnderMaintance from "../../UnderMaintance/UnderMaintance.jsx";
+
 
 function CreateBooking() {
-    return (<div className={createbookStyles['create-booking-content']}>
-        <h1>Létrehozó oldal</h1>
-        <p>Ez egy teszt szöveg, amely a Sidebar mellett jelenik meg.</p>
-    </div>)
+    return (
+        <UnderMaintance />
+    );
 }
 
 export default CreateBooking;

@@ -12,7 +12,7 @@ function UnderMaintance() {
                 </div>
                 <h1 className={underMainstyles['maintenance-title']}>Hamarosan</h1>
                 <p className={underMainstyles['maintenance-text']}>
-                    A Moonlight Valley Hotel új oldalán dolgozunk. Kérjük, térjen vissza később!
+                    A Hotelmenedzsment alkalmazás ezen része fejlesztés alatt.
                 </p>
                 <div className={underMainstyles['loader']}></div>
             </div>

@@ -17,7 +17,13 @@ function Sidebar() {
         setExpanded(false); // Hamburger menü bezárása
         if (link.title === 'Kilépés') {
             navigate('/');
-        } else {
+
+        }
+        else if (link.title==='Főoldal'){
+            navigate('/dashboard');
+        }
+        else
+        {
             const cleanTitle = removeAccents(link.title.toLowerCase());
             navigate(`/${cleanTitle}`);
         }

@@ -1,9 +1,12 @@
+.fullyPageBody {
+    background-color: #3A506B !important;
+}
+
 .bookingPageContent {
-    margin-left: 250px;
+    text-align: center;
     padding: 20px;
-    width: calc(100% - 250px);
-    box-sizing: border-box;
-    overflow-x: hidden;
+    max-width: 100%;
+    margin: 70px 0 0 0;
 }
 
 .bookingHeader {
@@ -19,6 +22,7 @@
     font-weight: bold;
     margin: 0;
     text-align: center;
+    color: #FFFFFF !important;
 }
 
 .newBookingButton {
@@ -42,24 +46,30 @@
 
 .bookingRoomsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 18px;
-    max-width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    width: 100%;
     box-sizing: border-box;
+    padding: 20px;
 }
 
 .bookingRoomCard {
-    border: 1px solid #ddd;
+    border: 1px solid black;
     border-radius: 8px;
-    padding: 9px;
+    padding: 20px;
     text-align: center;
-    background-color: white;
+    background-color: transparent;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.3s;
+    font-size: 14px;
+    color: white;
 }
 
 .bookingRoomCard:hover {
-    transform: scale(1.04);
+    transform: scale(1.2);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: mediumseagreen;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .bookingRoomCard.disabledRoom {
@@ -69,16 +79,16 @@
 }
 
 .bookingRoomCard h3 {
-    font-size: 13px;
-    margin-bottom: 6px;
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 .bookingStatusBox {
-    padding: 7px;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 20px;
     color: white;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 12px;
     transition: background-color 0.3s;
 }
 
@@ -97,27 +107,83 @@
 .dateDisplay {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: space-between;
+    gap: 10px;
     font-size: 14px;
     position: absolute;
     right: 20px;
     top: 0;
+    color: #FFFFFF;
+    white-space: nowrap;
+    margin: 0 auto;
+
 }
 
 .currentDate {
     font-size: 16px;
     font-weight: bold;
-    color: #333;
-    white-space: nowrap;
+    color: #FFFFFF;
+    text-align: center;
+    min-width: 120px;
+    flex-grow: 1;
 }
 
 .dateButton {
     font-size: 18px;
     color: #007bff;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 0.3s, transform 0.3s;
+    padding: 0 5px;
+    width: 20px;
+    text-align: center;
 }
 
 .dateButton:hover {
     color: #0056b3;
+    transform: scale(1.1);
+}
+
+
+.roomTypeSection {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.roomTypeTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+    text-align: left;
+    padding-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .bookingHeader {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .newBookingButton {
+        position: static;
+        order: 1;
+    }
+
+    .bookingTitle {
+        font-size: 20px;
+        order: 2;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .dateDisplay {
+        position: static;
+        justify-content: center;
+        gap: 10px;
+        font-size: 12px;
+        order: 3;
+    }
 }

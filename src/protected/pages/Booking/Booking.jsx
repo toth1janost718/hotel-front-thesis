@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchRoomStatuses } from "../../api/bookingApi";
+import { fetchRoomTypesWithRooms } from "../../api/bookingApi";
 import styles from "./Booking.module.css";
-
 
 const formatDate = (date) => {
     const months = [
@@ -15,31 +14,40 @@ const formatDate = (date) => {
 };
 
 const Booking = () => {
-    const [rooms, setRooms] = useState([]);
+    const [roomTypes, setRoomTypes] = useState([]);
     const [date, setDate] = useState(new Date());
     const navigate = useNavigate();
 
     useEffect(() => {
-        const getRoomStatuses = async () => {
+        const getRoomTypesWithRooms = async () => {
             try {
                 const formattedDate = date.toISOString().split("T")[0];
-                const data = await fetchRoomStatuses(formattedDate);
-                setRooms(data);
+                const data = await fetchRoomTypesWithRooms(formattedDate); // Új API-hívás
+                setRoomTypes(data);
             } catch (error) {
                 console.error("Hiba az API hívás során:", error);
             }
         };
 
-        getRoomStatuses();
+        getRoomTypesWithRooms();
     }, [date]);
 
     const handleNextDay = () => {
-        setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() + 1)));
+        setDate((prevDate) => {
+            const newDate = new Date(prevDate);
+            newDate.setDate(newDate.getDate() + 1);
+            return newDate;
+        });
     };
 
     const handlePreviousDay = () => {
-        setDate((prevDate) => new Date(prevDate.setDate(prevDate.getDate() - 1)));
+        setDate((prevDate) => {
+            const newDate = new Date(prevDate);
+            newDate.setDate(newDate.getDate() - 1);
+            return newDate;
+        });
     };
+
 
     const formatRoomNumber = (roomNumber) => {
         return roomNumber.toString().padStart(3, "0");
@@ -56,48 +64,50 @@ const Booking = () => {
     };
 
     return (
-        <div className={styles.bookingPageContent}>
-            <div className={styles.bookingHeader}>
-
-                <button className={styles.newBookingButton} onClick={handleNewBooking}>
-                    Új foglalás
-                </button>
-
-
-                <h1 className={styles.bookingTitle}>Szoba Státusz</h1>
-
-
-                <div className={styles.dateDisplay}>
-                    <span className={styles.dateButton} onClick={handlePreviousDay}>
-                        &#x25C0;
-                    </span>
-                    <span className={styles.currentDate}>{formatDate(date)}</span>
-                    <span className={styles.dateButton} onClick={handleNextDay}>
-                        &#x25B6;
-                    </span>
+        <div className={styles.fullyPageBody}>
+            <div className={styles.bookingPageContent}>
+                <div className={styles.bookingHeader}>
+                    <button className={styles.newBookingButton} onClick={handleNewBooking}>
+                        Új foglalás
+                    </button>
+                    <h1 className={styles.bookingTitle}>Foglaláskezelés</h1>
+                    <div className={styles.dateDisplay}>
+                        <span className={styles.dateButton} onClick={handlePreviousDay}>
+                            &#x25C0;
+                        </span>
+                        <span className={styles.currentDate}>{formatDate(date)}</span>
+                        <span className={styles.dateButton} onClick={handleNextDay}>
+                            &#x25B6;
+                        </span>
+                    </div>
                 </div>
-            </div>
 
-            {/* Szobák megjelenítése */}
-            <div className={styles.bookingRoomsGrid}>
-                {rooms.length > 0 ? (
-                    rooms.map((room) => (
-                        <div
-                            key={room.roomId}
-                            className={`${styles.bookingRoomCard} ${
-                                room.status === "Foglalt" ? styles.disabledRoom : ""
-                            }`}
-                            onClick={() => handleRoomClick(room)}
-                        >
-                            <h3>Szoba {formatRoomNumber(room.roomNumber)}</h3>
-                            <div
-                                className={`${styles.bookingStatusBox} ${
-                                    room.status === "Szabad"
-                                        ? styles.bookingFree
-                                        : styles.bookingOccupied
-                                }`}
-                            >
-                                {room.status}
+                {/* Szobák megjelenítése szobatípusok szerint */}
+                {roomTypes.length > 0 ? (
+                    roomTypes.map((roomType) => (
+                        <div key={roomType.roomTypeId} className={styles.roomTypeSection}>
+                            <h2 className={styles.roomTypeTitle}>{roomType.roomTypeName}</h2>
+                            <div className={styles.bookingRoomsGrid}>
+                                {roomType.rooms.map((room) => (
+                                    <div
+                                        key={room.roomId}
+                                        className={`${styles.bookingRoomCard} ${
+                                            room.status === "Foglalt" ? styles.disabledRoom : ""
+                                        }`}
+                                        onClick={() => handleRoomClick(room)}
+                                    >
+                                        <h3>{formatRoomNumber(room.roomNumber)}</h3>
+                                        <div
+                                            className={`${styles.bookingStatusBox} ${
+                                                room.status === "Szabad"
+                                                    ? styles.bookingFree
+                                                    : styles.bookingOccupied
+                                            }`}
+                                        >
+                                            {room.status}
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     ))

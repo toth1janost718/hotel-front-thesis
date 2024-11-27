@@ -55,16 +55,23 @@ function Restaurant() {
                         <div key={item.itemId} className={restaurantStyles["meal-card"]}>
                             {/* Elülső oldal */}
                             <div className={restaurantStyles["card-front"]}>
+                                {/* Kép hozzáadása az elülső oldalhoz */}
+                                <img
+                                    src={item.url}
+                                    alt={item.name}
+                                    className={restaurantStyles["meal-card-image"]}
+                                />
                                 <h4 className={restaurantStyles["meal-card-title"]}>
                                     {item.name}
                                 </h4>
-                                <p className={restaurantStyles["meal-card-price"]}>
-                                    {item.price} Ft
-                                </p>
+
                             </div>
 
                             {/* Hátsó oldal */}
                             <div className={restaurantStyles["card-back"]}>
+                                <p className={restaurantStyles["meal-card-price"]}>
+                                    {item.price} Ft
+                                </p>
                                 <input
                                     type="number"
                                     placeholder="Darab"

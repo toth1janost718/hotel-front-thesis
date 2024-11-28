@@ -7,10 +7,13 @@ function Restaurant() {
     const [mealTypes, setMealTypes] = useState([]);
     const [selectedMealType, setSelectedMealType] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    const [selectedRoom, setSelectedRoom] = useState(1);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [occupiedRooms, setOccupiedRooms] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const [popupMessage, setPopupMessage] = useState("");
 
     useEffect(() => {
+        // Menü elemek betöltése
         fetch(`${config.bookingApiBaseUrl}/api/MealTypeFilter`)
             .then((response) => response.json())
             .then((data) => {
@@ -24,6 +27,17 @@ function Restaurant() {
             })
             .catch((error) =>
                 console.error("Hiba történt az adatok betöltésekor:", error)
+            );
+
+        // Foglalt szobák lekérdezése a mai napra
+        fetch(`${config.bookingApiBaseUrl}/api/filters/roomstatus/today`)
+            .then((response) => response.json())
+            .then((data) => {
+                const occupied = data.filter((room) => room.status === "Foglalt");
+                setOccupiedRooms(occupied.map((room) => room.roomId));
+            })
+            .catch((error) =>
+                console.error("Hiba történt a szobák státuszának betöltésekor:", error)
             );
     }, []);
 
@@ -62,16 +76,52 @@ function Restaurant() {
     };
 
     const handleRoomChange = (e) => {
-        setSelectedRoom(e.target.value);
+        setSelectedRoom(parseInt(e.target.value, 10)); // Szobaszám kiválasztása
     };
 
-    const handleAddOrderToRoom = () => {
-        setShowPopup(true);
+    const handleAddOrderToRoom = async () => {
+        if (selectedRoom && selectedItems.length > 0) {
+            const orderPayload = {
+                RoomId: selectedRoom,
+                Items: selectedItems.map((item) => ({
+                    MenuItemId: item.itemId,
+                    Quantity: item.quantity,
+                })),
+            };
+
+            try {
+                const response = await fetch(
+                    `${config.bookingApiBaseUrl}/api/OrderProcessing/createOrder`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(orderPayload),
+                    }
+                );
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setPopupMessage(
+                        `Rendelés sikeresen rögzítve a(z) ${selectedRoom}. szobához.`
+                    );
+                } else {
+                    throw new Error("Nem sikerült a rendelés rögzítése.");
+                }
+            } catch (error) {
+                setPopupMessage("Hiba történt a rendelés rögzítése során.");
+            }
+
+            setShowPopup(true);
+            setSelectedItems([]); // Kosár ürítése
+        } else {
+            alert("Kérjük, válasszon szobát és adjon hozzá rendelési tételt!");
+        }
     };
 
     const handleClosePopup = () => {
         setShowPopup(false);
-        setSelectedItems([]); // Kosár ürítése
     };
 
     const totalAmount = selectedItems.reduce(
@@ -122,7 +172,7 @@ function Restaurant() {
             <div className={restaurantStyles["sidebar"]}>
                 {/* Szűrő */}
                 <div className={restaurantStyles["filter-container"]}>
-                    <label htmlFor="mealTypeFilter">Tipus</label>
+                    <label htmlFor="mealTypeFilter">Típus</label>
                     <select
                         id="mealTypeFilter"
                         value={selectedMealType}
@@ -172,17 +222,22 @@ function Restaurant() {
                         <label htmlFor="roomNumber">Szobaszám:</label>
                         <select
                             id="roomNumber"
-                            value={selectedRoom}
+                            value={selectedRoom || ""}
                             onChange={handleRoomChange}
+                            className={restaurantStyles["room-dropdown"]}
                         >
-                            {Array.from({ length: 30 }, (_, i) => i + 1).map((room) => (
-                                <option key={room} value={room}>
-                                    {room}
+                            <option value="" disabled>
+                                Válassz szobát
+                            </option>
+                            {occupiedRooms.map((roomId) => (
+                                <option key={roomId} value={roomId}>
+                                    {roomId}
                                 </option>
                             ))}
                         </select>
                         <button
                             className={restaurantStyles["add-order-button"]}
+                            disabled={!selectedRoom || selectedItems.length === 0}
                             onClick={handleAddOrderToRoom}
                         >
                             Hozzáadás
@@ -195,7 +250,7 @@ function Restaurant() {
             {showPopup && (
                 <div className={restaurantStyles["popup"]}>
                     <div className={restaurantStyles["popup-content"]}>
-                        <p>Rendelés a(z) {selectedRoom}.szobához rögzítve.</p>
+                        <p>{popupMessage}</p>
                         <button onClick={handleClosePopup}>OK</button>
                     </div>
                 </div>

@@ -1,7 +1,15 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchRoomTypesWithRooms } from "../../api/bookingApi";
 import styles from "./Booking.module.css";
+
+// Ikonok importálása
+import availableIcon from "../../../protected/assets/bookImgs/available.png";
+import occupiedIcon from "../../../protected/assets/bookImgs/occupied.png";
+import outOfOrderIcon from "../../../protected/assets/bookImgs/outoforder.png";
+
+// Config importálása az API URL-hez
+import config from "../../../../config.js";
 
 const formatDate = (date) => {
     const months = [
@@ -22,7 +30,7 @@ const Booking = () => {
         const getRoomTypesWithRooms = async () => {
             try {
                 const formattedDate = date.toISOString().split("T")[0];
-                const data = await fetchRoomTypesWithRooms(formattedDate); // Új API-hívás
+                const data = await fetchRoomTypesWithRooms(formattedDate);
                 setRoomTypes(data);
             } catch (error) {
                 console.error("Hiba az API hívás során:", error);
@@ -48,10 +56,7 @@ const Booking = () => {
         });
     };
 
-
-    const formatRoomNumber = (roomNumber) => {
-        return roomNumber.toString().padStart(3, "0");
-    };
+    const formatRoomNumber = (roomNumber) => roomNumber.toString().padStart(3, "0");
 
     const handleRoomClick = (room) => {
         if (room.status === "Szabad") {
@@ -59,17 +64,22 @@ const Booking = () => {
         }
     };
 
-    const handleNewBooking = () => {
-        navigate("/ujfoglalas");
+    const handleRoomIcon = (status) => {
+        switch (status) {
+            case "Szabad":
+                return availableIcon;
+            case "Foglalt":
+                return occupiedIcon;
+            default:
+                return outOfOrderIcon;
+        }
     };
 
     return (
         <div className={styles.fullyPageBody}>
             <div className={styles.bookingPageContent}>
                 <div className={styles.bookingHeader}>
-                    <button className={styles.newBookingButton} onClick={handleNewBooking}>
-                        Új foglalás
-                    </button>
+
                     <h1 className={styles.bookingTitle}>Foglaláskezelés</h1>
                     <div className={styles.dateDisplay}>
                         <span className={styles.dateButton} onClick={handlePreviousDay}>
@@ -86,7 +96,15 @@ const Booking = () => {
                 {roomTypes.length > 0 ? (
                     roomTypes.map((roomType) => (
                         <div key={roomType.roomTypeId} className={styles.roomTypeSection}>
-                            <h2 className={styles.roomTypeTitle}>{roomType.roomTypeName}</h2>
+                            <div className={styles.roomTypeHeader}>
+                                <h2 className={styles.roomTypeTitle}>{roomType.roomTypeName}</h2>
+                                <img
+                                    src={`${config.bookingApiBaseUrl}${roomType.pictUrl}`}
+                                    alt={`${roomType.roomTypeName} kép`}
+                                    className={styles.roomTypeImage}
+                                />
+
+                            </div>
                             <div className={styles.bookingRoomsGrid}>
                                 {roomType.rooms.map((room) => (
                                     <div
@@ -97,15 +115,11 @@ const Booking = () => {
                                         onClick={() => handleRoomClick(room)}
                                     >
                                         <h3>{formatRoomNumber(room.roomNumber)}</h3>
-                                        <div
-                                            className={`${styles.bookingStatusBox} ${
-                                                room.status === "Szabad"
-                                                    ? styles.bookingFree
-                                                    : styles.bookingOccupied
-                                            }`}
-                                        >
-                                            {room.status}
-                                        </div>
+                                        <img
+                                            src={handleRoomIcon(room.status)}
+                                            alt={room.status}
+                                            className={styles.roomStatusIcon}
+                                        />
                                     </div>
                                 ))}
                             </div>

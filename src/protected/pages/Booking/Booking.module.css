@@ -1,5 +1,5 @@
 .fullyPageBody {
-    background-color: #3A506B !important;
+    background-color: dodgerblue !important;
 }
 
 .bookingPageContent {
@@ -25,50 +25,34 @@
     color: #FFFFFF !important;
 }
 
-.newBookingButton {
-    position: absolute;
-    left: 0;
-    background-color: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
 
-.newBookingButton:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
 
 .bookingRoomsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-left: 0;
+
 }
 
 .bookingRoomCard {
-    border: 1px solid black;
-    border-radius: 8px;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 0;
     background-color: transparent;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s;
-    font-size: 14px;
-    color: white;
+    transition: transform 0.2s;
+
 }
 
 .bookingRoomCard:hover {
     transform: scale(1.2);
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: mediumseagreen;
+    box-shadow:none;
+    background-color: transparent;
     transition: box-shadow 0.3s ease-in-out;
 }
 
@@ -79,8 +63,8 @@
 }
 
 .bookingRoomCard h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: 14px;
+    margin: 5px 0;
 }
 
 .bookingStatusBox {
@@ -149,16 +133,40 @@
     padding: 20px;
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 .roomTypeTitle {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 20px;
     color: #FFFFFF;
-    text-align: left;
-    padding-left: 10px;
+    margin-top: 10px;
 }
+
+.roomTypeHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+
+.roomStatusIcon {
+    width: 75px;
+    height: 75px;
+    display: block;
+    margin: 0 auto;
+}
+
+.roomTypeImage {
+    width: 280px;
+    height: auto;
+    border-radius: 8px;
+
+}
+
+
 
 @media (max-width: 768px) {
     .bookingHeader {

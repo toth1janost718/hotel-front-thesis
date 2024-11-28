@@ -174,7 +174,7 @@
 
 /* Hátsó oldal */
 .card-back {
-    background-color: cornflowerblue;
+    background: linear-gradient(135deg, #2C3E50, #BDC3C7);
     transform: rotateY(180deg);
     display: flex;
     flex-direction: column;

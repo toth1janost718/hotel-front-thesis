@@ -1,5 +1,5 @@
 import  { useEffect, useState } from "react";
-import { fetchRoomTypesWithRooms } from "../../api/bookingApi";
+import {fetchRoomTypesWithCapacity, fetchRoomTypesWithRooms} from "../../api/bookingApi";
 import styles from "./Booking.module.css";
 import Modal from "./Modal";
 
@@ -26,19 +26,40 @@ const Booking = () => {
     const [date, setDate] = useState(new Date());
     const [selectedRoom, setSelectedRoom] = useState(null);
 
+
     useEffect(() => {
-        const getRoomTypesWithRooms = async () => {
+        const fetchRoomData = async () => {
             try {
                 const formattedDate = date.toISOString().split("T")[0];
-                const data = await fetchRoomTypesWithRooms(formattedDate);
-                setRoomTypes(data);
+
+                // Szobák lekérése
+                const roomsData = await fetchRoomTypesWithRooms(formattedDate);
+
+
+                // Kapacitás adatok lekérése
+                const capacityData = await fetchRoomTypesWithCapacity();
+
+
+                // Kapacitás hozzáadása a szobatípusokhoz
+                const updatedRoomTypes = roomsData.map((roomType) => ({
+                    ...roomType,
+                    capacity: capacityData.find((cap) => cap.roomTypeId === roomType.roomTypeId)?.capacity || 0,
+                }));
+
+
+                setRoomTypes(updatedRoomTypes);
             } catch (error) {
                 console.error("Hiba az API hívás során:", error);
             }
         };
 
-        getRoomTypesWithRooms();
+        fetchRoomData();
     }, [date]);
+
+
+
+
+
 
     const handleNextDay = () => {
         setDate((prevDate) => {
@@ -68,10 +89,11 @@ const Booking = () => {
         setSelectedRoom(null);
     };
 
-    const handleSave = () => {
-        console.log("Mentés történt a következő szobához:", selectedRoom);
-        setSelectedRoom(null);
+    // eslint-disable-next-line no-unused-vars
+    const handleSave = (guestCount) => {
+           setSelectedRoom(null);
     };
+
 
     const handleRoomIcon = (status) => {
         switch (status) {
@@ -143,15 +165,22 @@ const Booking = () => {
                     <p>Nincsenek elérhető szobák!</p>
                 )}
 
-                {/* Modális ablak */}
                 {selectedRoom && (
                     <Modal
                         room={selectedRoom}
+                        maxGuests={
+                            roomTypes.find((type) => type.roomTypeId === selectedRoom.roomTypeId)?.capacity || 1
+                        }
                         onClose={handleModalClose}
-                        onSave={handleSave}
+                        onSave={(guestCount) => {
+                                 handleSave(guestCount);
+                        }}
                     />
                 )}
+
+
             </div>
+
         </div>
     );
 };

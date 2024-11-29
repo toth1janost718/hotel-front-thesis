@@ -11,6 +11,14 @@ export const fetchRoomTypesWithRooms = async (date) => {
     return response.json();
 };
 
+export const fetchRoomTypesWithCapacity = async () => {
+    const response = await fetch(`${config.bookingApiBaseUrl}/api/filters/roomstatus/types`);
+    if (!response.ok) {
+        throw new Error("Hiba történt az API hívás során");
+    }
+    return response.json();
+};
+
 
 
 

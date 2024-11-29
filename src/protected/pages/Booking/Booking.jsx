@@ -2,6 +2,9 @@ import  { useEffect, useState } from "react";
 import {fetchRoomTypesWithCapacity, fetchRoomTypesWithRooms} from "../../api/bookingApi";
 import styles from "./Booking.module.css";
 import Modal from "./Modal";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { hu } from "date-fns/locale";
 
 // Ikonok importálása
 import availableIcon from "../../../protected/assets/bookImgs/available.png";
@@ -11,15 +14,7 @@ import outOfOrderIcon from "../../../protected/assets/bookImgs/outoforder.png";
 // Config importálása az API URL-hez
 import config from "../../../../config.js";
 
-const formatDate = (date) => {
-    const months = [
-        "Január", "Február", "Március", "Április", "Május", "Június",
-        "Július", "Augusztus", "Szeptember", "Október", "November", "December"
-    ];
-    const days = ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"];
-    const d = new Date(date);
-    return `${d.getFullYear()}. ${months[d.getMonth()]} ${d.getDate()}. ${days[d.getDay()]}`;
-};
+
 
 const Booking = () => {
     const [roomTypes, setRoomTypes] = useState([]);
@@ -57,26 +52,6 @@ const Booking = () => {
     }, [date]);
 
 
-
-
-
-
-    const handleNextDay = () => {
-        setDate((prevDate) => {
-            const newDate = new Date(prevDate);
-            newDate.setDate(newDate.getDate() + 1);
-            return newDate;
-        });
-    };
-
-    const handlePreviousDay = () => {
-        setDate((prevDate) => {
-            const newDate = new Date(prevDate);
-            newDate.setDate(newDate.getDate() - 1);
-            return newDate;
-        });
-    };
-
     const formatRoomNumber = (roomNumber) => roomNumber.toString().padStart(3, "0");
 
     const handleRoomClick = (room) => {
@@ -111,15 +86,16 @@ const Booking = () => {
             <div className={styles.bookingPageContent}>
                 <div className={styles.bookingHeader}>
                     <h1 className={styles.bookingTitle}>Foglalások kezelése</h1>
-                    <div className={styles.dateDisplay}>
-                        <span className={styles.dateButton} onClick={handlePreviousDay}>
-                            &#x25C0;
-                        </span>
-                        <span className={styles.currentDate}>{formatDate(date)}</span>
-                        <span className={styles.dateButton} onClick={handleNextDay}>
-                            &#x25B6;
-                        </span>
+                    <div className={styles.datePickerContainer}>
+                        <DatePicker
+                            selected={date}
+                            onChange={(selectedDate) => setDate(selectedDate)}
+                            dateFormat="yyyy. MMMM dd. EEEE"
+                            locale={hu}
+                            className={styles.datePickerInput}
+                        />
                     </div>
+
                 </div>
 
                 {/* Szobák két oszlopba rendezése */}

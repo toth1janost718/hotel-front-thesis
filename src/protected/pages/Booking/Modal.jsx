@@ -174,7 +174,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                         </div>
                         <div className={styles.modalActionButtons}>
                             <button className={styles.cancelActionButton} onClick={onClose}>
-                                Vissza
+                                Kilépés
                             </button>
                         </div>
                     </>
@@ -228,7 +228,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                 {currentGuestIndex + 1 < selectedGuestCount ? "Tovább" : "Mentés"}
                             </button>
                             <button className={styles.cancelActionButton} onClick={onClose}>
-                                Vissza
+                                Kilépés
                             </button>
                         </div>
                     </>

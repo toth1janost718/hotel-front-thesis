@@ -12,10 +12,11 @@
 
 .bookingHeader {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
     position: relative;
+    padding-right: 20px;
 }
 
 .bookingTitle {
@@ -93,40 +94,33 @@
 }
 
 
-
-.dateDisplay {
+.datePickerContainer {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 14px;
-    position: absolute;
-    right: 20px;
-    top: 0;
-    color: #FFFFFF;
-    white-space: nowrap;
-    margin: 0 auto;
-
+    margin: 10px 20px;
 }
 
-.currentDate {
+.datePickerInput {
     font-size: 16px;
-    font-weight: bold;
-    color: #FFFFFF;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
     text-align: center;
-    min-width: 120px;
-    flex-grow: 1;
+    width: 280px; /* Szélesebb elem */
+    background-color: #fff;
+    color: #333;
 }
 
-.dateButton {
-    font-size: 18px;
-    color: black;;
-    cursor: pointer;
-    transition: color 0.3s, transform 0.3s;
-    padding: 0 5px;
-    width: 20px;
-    text-align: center;
+.datePickerInput:focus {
+    outline: none;
+    border-color: #feb47b;
+    box-shadow: 0 0 4px rgba(255, 126, 95, 0.7);
 }
+
+
+
 
 .dateButton:hover {
     color: darkred;

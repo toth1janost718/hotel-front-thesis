@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { fetchRoomTypesWithRooms } from "../../api/bookingApi";
 import styles from "./Booking.module.css";
+import Modal from "./Modal";
 
 // Ikonok importálása
 import availableIcon from "../../../protected/assets/bookImgs/available.png";
@@ -24,7 +24,7 @@ const formatDate = (date) => {
 const Booking = () => {
     const [roomTypes, setRoomTypes] = useState([]);
     const [date, setDate] = useState(new Date());
-    const navigate = useNavigate();
+    const [selectedRoom, setSelectedRoom] = useState(null);
 
     useEffect(() => {
         const getRoomTypesWithRooms = async () => {
@@ -60,8 +60,17 @@ const Booking = () => {
 
     const handleRoomClick = (room) => {
         if (room.status === "Szabad") {
-            navigate("/ujfoglalas");
+            setSelectedRoom(room);
         }
+    };
+
+    const handleModalClose = () => {
+        setSelectedRoom(null);
+    };
+
+    const handleSave = () => {
+        console.log("Mentés történt a következő szobához:", selectedRoom);
+        setSelectedRoom(null);
     };
 
     const handleRoomIcon = (status) => {
@@ -79,8 +88,7 @@ const Booking = () => {
         <div className={styles.fullyPageBody}>
             <div className={styles.bookingPageContent}>
                 <div className={styles.bookingHeader}>
-
-                    <h1 className={styles.bookingTitle}>Foglaláskezelés</h1>
+                    <h1 className={styles.bookingTitle}>Foglalások kezelése</h1>
                     <div className={styles.dateDisplay}>
                         <span className={styles.dateButton} onClick={handlePreviousDay}>
                             &#x25C0;
@@ -92,41 +100,56 @@ const Booking = () => {
                     </div>
                 </div>
 
-                {/* Szobák megjelenítése szobatípusok szerint */}
+                {/* Szobák két oszlopba rendezése */}
                 {roomTypes.length > 0 ? (
-                    roomTypes.map((roomType) => (
-                        <div key={roomType.roomTypeId} className={styles.roomTypeSection}>
-                            <div className={styles.roomTypeHeader}>
-                                <h2 className={styles.roomTypeTitle}>{roomType.roomTypeName}</h2>
-                                <img
-                                    src={`${config.bookingApiBaseUrl}${roomType.pictUrl}`}
-                                    alt={`${roomType.roomTypeName} kép`}
-                                    className={styles.roomTypeImage}
-                                />
-
-                            </div>
-                            <div className={styles.bookingRoomsGrid}>
-                                {roomType.rooms.map((room) => (
-                                    <div
-                                        key={room.roomId}
-                                        className={`${styles.bookingRoomCard} ${
-                                            room.status === "Foglalt" ? styles.disabledRoom : ""
-                                        }`}
-                                        onClick={() => handleRoomClick(room)}
-                                    >
-                                        <h3>{formatRoomNumber(room.roomNumber)}</h3>
+                    roomTypes.reduce((rows, _, index, arr) => {
+                        if (index % 2 === 0) rows.push(arr.slice(index, index + 2));
+                        return rows;
+                    }, []).map((pair, rowIndex) => (
+                        <div key={rowIndex} className={styles.rowContainer}>
+                            {pair.map((roomType) => (
+                                <div key={roomType.roomTypeId} className={styles.roomTypeSection}>
+                                    <div className={styles.roomTypeHeader}>
+                                        <h2 className={styles.roomTypeTitle}>{roomType.roomTypeName}</h2>
                                         <img
-                                            src={handleRoomIcon(room.status)}
-                                            alt={room.status}
-                                            className={styles.roomStatusIcon}
+                                            src={`${config.bookingApiBaseUrl}${roomType.pictUrl}`}
+                                            alt={`${roomType.roomTypeName} kép`}
+                                            className={styles.roomTypeImage}
                                         />
                                     </div>
-                                ))}
-                            </div>
+                                    <div className={styles.bookingRoomsGrid}>
+                                        {roomType.rooms.map((room) => (
+                                            <div
+                                                key={room.roomId}
+                                                className={`${styles.bookingRoomCard} ${
+                                                    room.status === "Foglalt" ? styles.disabledRoom : ""
+                                                }`}
+                                                onClick={() => handleRoomClick(room)}
+                                            >
+                                                <h3>{formatRoomNumber(room.roomNumber)}</h3>
+                                                <img
+                                                    src={handleRoomIcon(room.status)}
+                                                    alt={room.status}
+                                                    className={styles.roomStatusIcon}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     ))
                 ) : (
                     <p>Nincsenek elérhető szobák!</p>
+                )}
+
+                {/* Modális ablak */}
+                {selectedRoom && (
+                    <Modal
+                        room={selectedRoom}
+                        onClose={handleModalClose}
+                        onSave={handleSave}
+                    />
                 )}
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { fetchRoomTypesWithRooms } from "../../api/bookingApi";
 import styles from "./Booking.module.css";
 import Modal from "./Modal";
@@ -88,7 +88,7 @@ const Booking = () => {
         <div className={styles.fullyPageBody}>
             <div className={styles.bookingPageContent}>
                 <div className={styles.bookingHeader}>
-                    <h1 className={styles.bookingTitle}>Foglalások kezelése</h1>
+                    <h1 className={styles.bookingTitle}>Foglaláskezelés</h1>
                     <div className={styles.dateDisplay}>
                         <span className={styles.dateButton} onClick={handlePreviousDay}>
                             &#x25C0;
@@ -155,5 +155,6 @@ const Booking = () => {
         </div>
     );
 };
+
 
 export default Booking;

@@ -15,7 +15,7 @@ function Content() {
             <Route element={<ProtectedRoutes />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/etterem" element={<Restaurant />} />
-                <Route path="/foglalaskezeles" element={<Booking />} />
+                <Route path="/foglalas" element={<Booking />} />
                 <Route path="/HR" element={<Employees />} />
                 <Route path="/beallitas" element={<Settings />} />
             </Route>

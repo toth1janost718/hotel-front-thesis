@@ -88,7 +88,7 @@ const Booking = () => {
         <div className={styles.fullyPageBody}>
             <div className={styles.bookingPageContent}>
                 <div className={styles.bookingHeader}>
-                    <h1 className={styles.bookingTitle}>Foglaláskezelés</h1>
+                    <h1 className={styles.bookingTitle}>Foglalások kezelése</h1>
                     <div className={styles.dateDisplay}>
                         <span className={styles.dateButton} onClick={handlePreviousDay}>
                             &#x25C0;

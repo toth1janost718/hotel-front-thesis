@@ -90,3 +90,77 @@
     color: #1A374D !important;
     transform: scale(1.1);
 }
+
+@media (max-width: 768px) {
+    @media (max-width: 768px) {
+
+        .navLinks {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(34, 40, 49, 0.9);
+            backdrop-filter: blur(3px);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            z-index: 999;
+            border-radius: 0 0 12px 12px;
+        }
+
+
+        .navLink {
+            font-size: 1.1rem;
+            padding: 12px 18px;
+            text-align: center;
+            border-radius: 6px;
+            background-color: rgba(57, 62, 70, 0.8);
+            color: #FFFFFF;
+            transition: all 0.3s ease;
+        }
+
+        .navLink:hover {
+            background-color: rgba(255, 193, 7, 0.85);
+            color: #1A374D;
+            transform: scale(1.05);
+        }
+
+
+        .logoutLink {
+            font-size: 1.2rem;
+            padding: 12px 18px;
+            margin-top: auto;
+            background-color: rgba(255, 193, 7, 0.8);
+            color: #1A374D;
+            text-align: center;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .logoutLink:hover {
+            background-color: rgba(255, 193, 7, 1);
+            color: #162A49;
+            transform: scale(1.05);
+        }
+    }
+
+
+    .custom-navbar {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+
+    .navLinks {
+        display: none; /* Alapértelmezésben rejtve */
+    }
+
+    .navLinks.active {
+        display: flex; /* Kinyitott állapotban jelenik meg */
+    }
+
+
+}
+

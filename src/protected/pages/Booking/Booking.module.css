@@ -50,6 +50,7 @@
 }
 
 .bookingRoomCard {
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -144,6 +145,7 @@
     color: #FFFFFF;
    margin-bottom: 20px;
 
+
 }
 
 .roomTypeHeader {
@@ -155,9 +157,10 @@
 
 .rowContainer {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: 40px;
+
 }
 
 .roomStatusIcon {
@@ -174,6 +177,7 @@
 .roomTypeImage {
     width: 300px;
     max-height: 300px;
+    max-width: 300px;
     height: auto;
     border-radius: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -255,3 +259,41 @@
     border: none;
     border-radius: 5px;
 }
+@media (max-width: 768px) {
+    .rowContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .roomTypeSection {
+        width: 100%;
+    }
+
+    .roomTypeImage {
+        max-width: 90%;
+        margin-bottom: 10px;
+    }
+
+    .bookingRoomsGrid {
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .bookingRoomsGrid:first-of-type {
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .bookingRoomCard {
+        flex: 0 0 48%;
+        max-width: 48%;
+        margin-bottom: 10px;
+    }
+
+    .bookingRoomCard h3 {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 5px;
+    }
+}
+

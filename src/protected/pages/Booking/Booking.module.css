@@ -176,10 +176,12 @@
     max-height: 300px;
     height: auto;
     border-radius: 20px;
-
-
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.roomTypeImage:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
 
 
 @media (max-width: 768px) {

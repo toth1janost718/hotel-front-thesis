@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import styles from "./Modal.module.css";
+import { saveBookingToApi } from "../../api/bookingApi";
 
 const Modal = ({ room, maxGuests, onClose, onSave }) => {
     const [step, setStep] = useState(1); // 1: Foglalás, 2: Vendégszám választás, 3: Vendégek
@@ -58,15 +59,51 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
         updatedGuestData[currentGuestIndex][field] = value;
         setGuestData(updatedGuestData);
     };
-
-    const handleGuestSave = () => {
+    const handleGuestSave = async () => {
         if (currentGuestIndex + 1 < selectedGuestCount) {
             setCurrentGuestIndex((prevIndex) => prevIndex + 1);
         } else {
-           onSave(guestData.slice(0, selectedGuestCount));
-            onClose();
+            const formattedGuests = guestData.slice(0, selectedGuestCount).map(guest => ({
+                ...guest,
+                age: parseInt(guest.age, 10),
+                postalCode: parseInt(guest.postalCode, 10),
+                isAdult: guest.type === "Felnőtt",
+            }));
+
+            const bookingData = {
+                ...bookingDetails,
+                roomId: room.roomId,
+                bookingStatus: "Elfogadva",
+                room: {
+                    roomId: room.roomId,
+                    roomNumber: room.roomNumber,
+                    roomTypeId: room.roomTypeId || 1,
+                },
+                mealPlan: {
+                    mealPlanId: bookingDetails.mealPlanId,
+                    mealOption: "Félpanzió",
+                    mealPrice: 6000,
+                },
+                guests: formattedGuests,
+            };
+
+            console.log("Elküldött JSON:", JSON.stringify(bookingData, null, 2));
+
+            try {
+                const result = await saveBookingToApi(bookingData);
+                console.log("Foglalás sikeresen mentve:", result);
+                alert("Foglalás sikeresen mentve!");
+                onClose();
+            } catch (error) {
+                console.error("Hiba történt a mentés során:", error.message);
+                alert("Nem sikerült a foglalás mentése.");
+            }
         }
     };
+
+
+
+
 
     return (
         <div className={styles.modalContainer}>
@@ -240,11 +277,11 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
 
 Modal.propTypes = {
     room: PropTypes.shape({
-        roomNumber: PropTypes.number.isRequired,
+        roomId: PropTypes.number.isRequired,
+        roomNumber: PropTypes.number.isRequired
     }).isRequired,
     maxGuests: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
 };
-
 export default Modal;

@@ -111,33 +111,65 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                 isAdult: guest.type === "Felnőtt",
             }));
 
-            const bookingData = {
-                ...bookingDetails,
-                roomId: room.roomId,
-                bookingStatus: "Foglalt",
-                room: {
-                    roomId: room.roomId,
-                    roomNumber: room.roomNumber,
-                    roomTypeId: room.roomTypeId || 1,
-                },
-                mealPlan: {
-                    mealPlanId: bookingDetails.mealPlanId,
-                    mealOption: "Félpanzió",
-                    mealPrice: 6000,
-                },
-                guests: formattedGuests,
-            };
+            // Vendégek kategorizálása
+            const adults = formattedGuests.filter(guest => guest.isAdult).length;
+            const children = formattedGuests.filter(guest => !guest.isAdult && guest.age >= 3).length;
+            const under3 = formattedGuests.filter(guest => guest.age < 3).length;
 
-            console.log("Elküldött JSON:", JSON.stringify(bookingData, null, 2));
+            // Foglalás időtartama
+            const checkInDate = new Date(bookingDetails.checkInDate);
+            const checkOutDate = new Date(bookingDetails.checkOutDate);
+            const days = Math.max(
+                (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24),
+                1
+            );
 
             try {
+                // Szobaárak lekérése
+                const roomPrices = await fetchRoomPriceByType(room.roomTypeId);
+                const adultPrice = roomPrices.adultPricePerNight;
+                const childPrice = roomPrices.childPricePerNight;
+                const under3Price = roomPrices.under3Price;
+
+                // Végső ár kiszámítása
+                const totalPrice =
+                    days * (adults * adultPrice + children * childPrice + under3 * under3Price);
+
+                // Árak frissítése
+                setBookingDetails((prevDetails) => ({
+                    ...prevDetails,
+                    bookedPrice: totalPrice,
+                }));
+
+                // Foglalás adatainak összeállítása
+                const bookingData = {
+                    ...bookingDetails,
+                    bookedPrice: totalPrice, // Végső ár
+                    roomId: room.roomId,
+                    bookingStatus: "Foglalt",
+                    room: {
+                        roomId: room.roomId,
+                        roomNumber: room.roomNumber,
+                        roomTypeId: room.roomTypeId || 1,
+                    },
+                    mealPlan: {
+                        mealPlanId: bookingDetails.mealPlanId,
+                        mealOption: "Félpanzió",
+                        mealPrice: 6000,
+                    },
+                    guests: formattedGuests,
+                };
+
+                console.log("Elküldött JSON:", JSON.stringify(bookingData, null, 2));
+
+                // API hívás
                 const result = await saveBookingToApi(bookingData);
                 console.log("Foglalás sikeresen mentve:", result);
                 alert("Foglalás sikeresen mentve!");
                 onClose();
             } catch (error) {
-                console.error("Hiba történt a mentés során:", error.message);
-                alert("Nem sikerült a foglalás mentése.");
+                console.error("Hiba történt a foglalás árának kiszámítása során:", error.message);
+                alert("Nem sikerült kiszámolni a foglalás árát.");
             }
         }
     };

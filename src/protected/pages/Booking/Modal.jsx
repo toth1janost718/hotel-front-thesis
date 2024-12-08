@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import styles from "./Modal.module.css";
-import { saveBookingToApi } from "../../api/bookingApi";
+import {fetchRoomPriceByType, saveBookingToApi} from "../../api/bookingApi";
 
 const Modal = ({ room, maxGuests, onClose, onSave }) => {
     const [step, setStep] = useState(1); // 1: Foglalás, 2: Vendégszám választás, 3: Vendégek
@@ -27,6 +27,31 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
             type: "Felnőtt",
         }))
     );
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        const fetchRoomPrice = async () => {
+            setLoading(true);
+            try {
+                const priceData = await fetchRoomPriceByType(room.roomTypeId);
+                setBookingDetails((prevDetails) => ({
+                    ...prevDetails,
+                    bookedPrice: priceData.adultPricePerNight, // Alapértelmezett ár felnőtteknek
+                }));
+            } catch (error) {
+                console.error("Hiba történt a szoba árának betöltésekor:", error.message);
+                alert("Nem sikerült betölteni a szoba árait.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (room?.roomTypeId) {
+            fetchRoomPrice();
+        }
+    }, [room?.roomTypeId]);
+
+
+
 
     const validateBookingDetails = () => {
         const newErrors = {};
@@ -59,6 +84,22 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
         updatedGuestData[currentGuestIndex][field] = value;
         setGuestData(updatedGuestData);
     };
+
+    const fetchRoomPrice = async (roomTypeId) => {
+        try {
+            const response = await fetch(`/api/RoomPriceFilter/${roomTypeId}`);
+            if (!response.ok) {
+                throw new Error("Hiba történt a szoba árának betöltésekor.");
+            }
+            const priceData = await response.json();
+            return priceData.adultPricePerNight; // Csak a felnőtt ár érdekel
+        } catch (error) {
+            console.error("Hiba történt a szoba árának betöltésekor:", error.message);
+            return 0; // Alapértelmezett érték hiba esetén
+        }
+    };
+
+
     const handleGuestSave = async () => {
         if (currentGuestIndex + 1 < selectedGuestCount) {
             setCurrentGuestIndex((prevIndex) => prevIndex + 1);
@@ -73,7 +114,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
             const bookingData = {
                 ...bookingDetails,
                 roomId: room.roomId,
-                bookingStatus: "Elfogadva",
+                bookingStatus: "Foglalt",
                 room: {
                     roomId: room.roomId,
                     roomNumber: room.roomNumber,
@@ -175,8 +216,10 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                 </select>
                             </label>
                             <p>
-                                <strong>Szoba alapára:</strong> {bookingDetails.bookedPrice} Ft/nap
+                                <strong>Szoba
+                                    alapára:</strong> {bookingDetails.bookedPrice > 0 ? `${bookingDetails.bookedPrice} Ft/nap` : "Nincs elérhető ár"}
                             </p>
+
                             <p>
                                 <strong>Extra költségek:</strong> {bookingDetails.additionalCharges} Ft
                             </p>
@@ -278,7 +321,8 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
 Modal.propTypes = {
     room: PropTypes.shape({
         roomId: PropTypes.number.isRequired,
-        roomNumber: PropTypes.number.isRequired
+        roomNumber: PropTypes.number.isRequired,
+        roomTypeId: PropTypes.number.isRequired,
     }).isRequired,
     maxGuests: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,

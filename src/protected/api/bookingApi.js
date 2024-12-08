@@ -44,5 +44,14 @@ export const fetchRoomTypesWithCapacity = async () => {
 };
 
 
+export const fetchRoomPriceByType = async (roomTypeId) => {
+    const response = await fetch(`${config.bookingApiBaseUrl}/api/RoomPriceFilter/${roomTypeId}`);
+    if (!response.ok) {
+        throw new Error("Nem sikerült lekérni a szoba árait.");
+    }
+    return response.json();
+};
+
+
 
 

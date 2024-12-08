@@ -1,18 +1,24 @@
-import React, {useEffect} from "react";
+import  {useEffect} from "react";
 import './Dashboard.module.css'
 
 import Sidebar  from "./components/Sidebar/Sidebar.jsx";
 import Content from "./components/Content/Content.jsx";
+import {useNavigate} from "react-router-dom";
+
 
 function Dashboard() {
 
-        useEffect(() => {
-            import('bootstrap/dist/css/bootstrap.min.css');
-        }, []);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        import('bootstrap/dist/css/bootstrap.min.css'); // Bootstrap betöltése
+        navigate('/foglalas'); // Automatikus átirányítás a /foglalas útvonalra
+    }, [navigate]);
     return (
         <div className="dashboard">
-            <Sidebar />
-            <Content />
+            <Sidebar/>
+            <Content/>
+
         </div>
 
     )

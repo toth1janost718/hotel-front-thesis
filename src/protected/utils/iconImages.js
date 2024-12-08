@@ -2,7 +2,7 @@ import homeIcon from '../assets/iconsImgs/home.svg';
 import bookingIcon from '../assets/iconsImgs/booking.svg';
 import restaurantIcon from '../assets/iconsImgs/restaurant.svg';
 import employeesIcon from '../assets/iconsImgs/employees.svg';
-import settingsIcon from '../assets/iconsImgs/settings.svg';
+import accountIcon from '../assets/iconsImgs/account.svg';
 import exitIcon from '../assets/iconsImgs/exit.svg';
 
 export const iconsImgs={
@@ -11,7 +11,7 @@ export const iconsImgs={
     booking: bookingIcon,
     restaurant: restaurantIcon,
     employees: employeesIcon,
-    settings: settingsIcon,
+    account: accountIcon,
     exit: exitIcon,
 }
 

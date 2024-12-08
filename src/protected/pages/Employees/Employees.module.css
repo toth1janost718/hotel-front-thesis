@@ -217,6 +217,43 @@
 .modalContent button:hover {
     background: #6e3510;
 }
+.employeeTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employeeTable th {
+    background-color: #8b4513;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.employeeTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    color: #333;
+    background-color: #fff;
+}
+
+.employeeTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.employeeTable tr:hover {
+    background-color: #f1f1f1;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
 
 /* Mobil nézet */
 @media (max-width: 768px) {

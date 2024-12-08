@@ -6,10 +6,11 @@ import Dashboard from "../../../protected/Dashboard.jsx";
 import Restaurant from "../../../protected/pages/Restaurant/Restaurant.jsx";
 import Booking from "../../../protected/pages/Booking/Booking.jsx";
 import Employees from "../../../protected/pages/Employees/Employees.jsx";
-import Settings from "../../../protected/pages/Settings/Settings.jsx";
+import Account from "../../pages/Account/Account.jsx";
 
 
-function Content() {
+
+const Content=() => {
     return (
         <Routes>
             <Route element={<ProtectedRoutes />}>
@@ -17,7 +18,8 @@ function Content() {
                 <Route path="/etterem" element={<Restaurant />} />
                 <Route path="/foglalas" element={<Booking />} />
                 <Route path="/HR" element={<Employees />} />
-                <Route path="/beallitas" element={<Settings />} />
+                <Route path="/szamla" element={<Account />} />
+
             </Route>
         </Routes>
     );

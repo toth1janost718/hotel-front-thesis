@@ -1,28 +1,88 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import employeeStyles from "./Employees.module.css";
 import vacationImg from "../../../protected/assets/employeImgs/vacation.png";
 import dayoffImg from "../../../protected/assets/employeImgs/dayoff.png";
 import workImg from "../../../protected/assets/employeImgs/work.png";
+import { getAllEmployeeSchedules } from "../../api/employeeApi.js";
 
 function Employees() {
     const [isStatusOpen, setIsStatusOpen] = useState(false); // Állapot lenyitás kezelése
     const [activeModal, setActiveModal] = useState(null); // Aktív modál kezelése
+    const [employees, setEmployees] = useState([]); // Alkalmazottak adatai
+    const [filters, setFilters] = useState({ searchTerm: "", status: "" }); // Keresési és állapot szűrő
+    const [error, setError] = useState(""); // Hibakezelés
+
+    useEffect(() => {
+        // API-hívás az alkalmazottak lekérdezésére
+        const fetchEmployees = async () => {
+            try {
+                const data = await getAllEmployeeSchedules();
+
+                // Állapot hozzárendelése
+                const enrichedEmployees = data.map((employee) => {
+                    let scheduleStatus = "Munkában";
+                    if (employee.isLeave) {
+                        scheduleStatus = "Szabadság";
+                    } else if (!employee.shiftStart && !employee.shiftEnd) {
+                        scheduleStatus = "Szabadnap";
+                    }
+                    return { ...employee, scheduleStatus };
+                });
+
+                setEmployees(enrichedEmployees);
+            } catch (err) {
+                setError("Nem sikerült lekérni az alkalmazottak adatait.");
+            }
+        };
+
+        fetchEmployees();
+    }, []);
 
     const toggleStatusMenu = () => {
         setIsStatusOpen((prev) => !prev); // Állapot gomb lenyitás/zárás
+        if (isStatusOpen) {
+            setFilters((prevFilters) => ({
+                ...prevFilters,
+                status: "", // Állapot szűrő visszaállítása
+            }));
+        }
     };
 
     const handleStatusClick = (status) => {
-        console.log(`${status} kiválasztva`); // Debug: státusz kattintás
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            status: status,
+        }));
     };
 
     const openModal = (modalId) => {
-        setActiveModal(modalId); // Megnyitja az adott modált
+        setActiveModal(modalId); // Modális ablak megnyitása
     };
 
     const closeModal = () => {
-        setActiveModal(null); // Bezárja a modált
+        setActiveModal(null); // Modális ablak bezárása
     };
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value,
+        }));
+    };
+
+    // Szűrés keresés és állapot szerint
+    const filteredEmployees = employees.filter((employee) => {
+        const matchesSearchTerm =
+            employee.lastName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+            employee.firstName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
+            employee.positionName.toLowerCase().includes(filters.searchTerm.toLowerCase());
+
+        const matchesStatus =
+            filters.status === "" || employee.scheduleStatus === filters.status;
+
+        return matchesSearchTerm && matchesStatus;
+    });
 
     return (
         <div className={employeeStyles.pageContainer}>
@@ -31,6 +91,9 @@ function Employees() {
                 <input
                     type="text"
                     placeholder="Keresés (név, pozíció)"
+                    name="searchTerm"
+                    value={filters.searchTerm}
+                    onChange={handleFilterChange}
                     className={employeeStyles.searchInput}
                 />
 
@@ -42,7 +105,6 @@ function Employees() {
                     Állapot
                 </button>
 
-                {/* Állapot lenyíló menü */}
                 {isStatusOpen && (
                     <div className={employeeStyles.statusIcons}>
                         <div className={employeeStyles.iconWrapper}>
@@ -65,12 +127,12 @@ function Employees() {
                         </div>
                         <div className={employeeStyles.iconWrapper}>
                             <button
-                                onClick={() => handleStatusClick("Munka")}
+                                onClick={() => handleStatusClick("Munkában")}
                                 className={employeeStyles.iconButton}
                                 style={{ backgroundImage: `url(${workImg})` }}
-                                aria-label="Munka"
+                                aria-label="Munkában"
                             />
-                            <span className={employeeStyles.iconLabel}>Munka</span>
+                            <span className={employeeStyles.iconLabel}>Munkában</span>
                         </div>
                     </div>
                 )}
@@ -115,9 +177,25 @@ function Employees() {
             {/* Jobb oldali oszlop */}
             <div className={employeeStyles.rightColumn}>
                 <h2>Dolgozói lista</h2>
-                <div className={employeeStyles.employeeList}>
-
-                </div>
+                {error && <p className={employeeStyles.error}>{error}</p>}
+                <table className={employeeStyles.employeeTable}>
+                    <thead>
+                    <tr>
+                        <th>Vezetéknév</th>
+                        <th>Keresztnév</th>
+                        <th>Pozíció</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {filteredEmployees.map((employee) => (
+                        <tr key={employee.employeeId}>
+                            <td>{employee.lastName}</td>
+                            <td>{employee.firstName}</td>
+                            <td>{employee.positionName}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
             </div>
 
             {/* Modálok */}

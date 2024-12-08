@@ -1,9 +1,9 @@
 import UnderMaintance from "../UnderMaintance/UnderMaintance.jsx";
 
-function  Settings() {
+function  Account() {
     return (
         <UnderMaintance />
     );
 }
 
-export default Settings;
+export default Account;

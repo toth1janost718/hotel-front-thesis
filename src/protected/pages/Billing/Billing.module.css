@@ -1,0 +1,140 @@
+.setting-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.billingContainer {
+    display: flex;
+    gap: 20px;
+    background-color: #f5f5f5;
+}
+
+
+
+.leftColumn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: rgba(240, 248, 255, 0.6);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.fetchButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.fetchInvoice {
+    background-color: #007bff; /* Kék */
+}
+
+.fetchInvoice:hover {
+    background-color: #0056b3;
+}
+
+.createInvoice {
+    background-color: #ff5722; /* Narancs */
+}
+
+.createInvoice:hover {
+    background-color: #e64a19;
+}
+
+.sendInvoice {
+    background-color: #ffc107; /* Sárga */
+    color: black;
+}
+
+.sendInvoice:hover {
+    background-color: #e0a800;
+}
+
+/* Dinamikus gombok - egymás mellett */
+.filterRow {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.filterButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    flex: 1; /* Egyenlő szélesség */
+    color: white;
+}
+
+.openInvoices {
+    background-color: #dc3545; /* Piros */
+}
+
+.openInvoices:hover {
+    background-color: #b02a37;
+}
+
+.closedInvoices {
+    background-color: #28a745; /* Zöld */
+}
+
+.closedInvoices:hover {
+    background-color: #218838;
+}
+
+.rightColumn {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.topSection, .bottomSection {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.invoiceTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.invoiceTable th, .invoiceTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.invoiceTable th {
+    background-color: #007bff;
+    color: white;
+}
+
+.payButton {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payButton:hover {
+    background-color: #218838;
+}

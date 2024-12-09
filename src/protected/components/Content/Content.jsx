@@ -6,7 +6,7 @@ import Dashboard from "../../../protected/Dashboard.jsx";
 import Restaurant from "../../../protected/pages/Restaurant/Restaurant.jsx";
 import Booking from "../../../protected/pages/Booking/Booking.jsx";
 import Employees from "../../../protected/pages/Employees/Employees.jsx";
-import Account from "../../pages/Account/Account.jsx";
+import Billing from "../../pages/Billing/Billing.jsx";
 
 
 
@@ -18,7 +18,7 @@ const Content=() => {
                 <Route path="/etterem" element={<Restaurant />} />
                 <Route path="/foglalas" element={<Booking />} />
                 <Route path="/HR" element={<Employees />} />
-                <Route path="/szamla" element={<Account />} />
+                <Route path="/szamla" element={<Billing />} />
 
             </Route>
         </Routes>

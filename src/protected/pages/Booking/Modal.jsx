@@ -28,6 +28,31 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
         }))
     );
     const [loading, setLoading] = useState(false);
+    const [mealPlanOptions, setMealPlanOptions] = useState([]);
+
+    const fetchMealPlans = async () => {
+        try {
+            const response = await fetch("http://localhost:5086/api/MealPlan");
+            if (!response.ok) {
+                throw new Error("Hiba történt az étkezési tervek betöltésekor.");
+            }
+            const mealPlans = await response.json();
+            return mealPlans;
+        } catch (error) {
+            console.error("Hiba történt az étkezési tervek betöltésekor:", error.message);
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        const loadMealPlans = async () => {
+            const mealPlans = await fetchMealPlans();
+            setMealPlanOptions(mealPlans);
+        };
+
+        loadMealPlans();
+    }, []);
+
     useEffect(() => {
         const fetchRoomPrice = async () => {
             setLoading(true);
@@ -99,7 +124,6 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
         }
     };
 
-
     const handleGuestSave = async () => {
         if (currentGuestIndex + 1 < selectedGuestCount) {
             setCurrentGuestIndex((prevIndex) => prevIndex + 1);
@@ -131,20 +155,27 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                 const childPrice = roomPrices.childPricePerNight;
                 const under3Price = roomPrices.under3Price;
 
-                // Végső ár kiszámítása
-                const totalPrice =
-                    days * (adults * adultPrice + children * childPrice + under3 * under3Price);
+                // Étkezési terv árának lekérése
+                const mealPlan = mealPlanOptions.find(plan => plan.mealPlanId === bookingDetails.mealPlanId);
+                const mealPrice = mealPlan ? mealPlan.mealPrice : 0;
+
+                // Végső ár kiszámítása (szoba és étkezési terv)
+                const roomCharges = days * (adults * adultPrice + children * childPrice + under3 * under3Price);
+                const mealCharges = days * (adults * mealPrice + children * (mealPrice / 2));
+                const totalPrice = roomCharges + mealCharges;
 
                 // Árak frissítése
                 setBookingDetails((prevDetails) => ({
                     ...prevDetails,
-                    bookedPrice: totalPrice,
+                    bookedPrice: roomCharges,
+                    additionalCharges: mealCharges,
                 }));
 
                 // Foglalás adatainak összeállítása
                 const bookingData = {
                     ...bookingDetails,
-                    bookedPrice: totalPrice, // Végső ár
+                    bookedPrice: roomCharges, // Szobaár
+                    additionalCharges: mealCharges, // Étkezési ár
                     roomId: room.roomId,
                     bookingStatus: "Foglalt",
                     room: {
@@ -154,8 +185,8 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                     },
                     mealPlan: {
                         mealPlanId: bookingDetails.mealPlanId,
-                        mealOption: "Félpanzió",
-                        mealPrice: 6000,
+                        mealOption: mealPlan?.mealOption || "Nem kért",
+                        mealPrice: mealPrice,
                     },
                     guests: formattedGuests,
                 };
@@ -178,6 +209,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
 
 
 
+
     return (
         <div className={styles.modalContainer}>
             <div className={styles.modalContentWrapper}>
@@ -191,7 +223,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                     type="date"
                                     value={bookingDetails.checkInDate}
                                     onChange={(e) =>
-                                        setBookingDetails({ ...bookingDetails, checkInDate: e.target.value })
+                                        setBookingDetails({...bookingDetails, checkInDate: e.target.value})
                                     }
                                     className={errors.checkInDate ? styles.inputError : ""}
                                 />
@@ -203,7 +235,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                     type="date"
                                     value={bookingDetails.checkOutDate}
                                     onChange={(e) =>
-                                        setBookingDetails({ ...bookingDetails, checkOutDate: e.target.value })
+                                        setBookingDetails({...bookingDetails, checkOutDate: e.target.value})
                                     }
                                     className={errors.checkOutDate ? styles.inputError : ""}
                                 />
@@ -215,7 +247,7 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                     type="email"
                                     value={bookingDetails.contactEmail}
                                     onChange={(e) =>
-                                        setBookingDetails({ ...bookingDetails, contactEmail: e.target.value })
+                                        setBookingDetails({...bookingDetails, contactEmail: e.target.value})
                                     }
                                     className={errors.contactEmail ? styles.inputError : ""}
                                 />
@@ -227,26 +259,27 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
                                     type="tel"
                                     value={bookingDetails.contactPhone}
                                     onChange={(e) =>
-                                        setBookingDetails({ ...bookingDetails, contactPhone: e.target.value })
+                                        setBookingDetails({...bookingDetails, contactPhone: e.target.value})
                                     }
                                     className={errors.contactPhone ? styles.inputError : ""}
                                 />
                                 {errors.contactPhone && <p className={styles.errorText}>{errors.contactPhone}</p>}
-                            </label>
-                            <label>
-                                Étkezési terv:
-                                <select
-                                    value={bookingDetails.mealPlanId}
-                                    onChange={(e) =>
-                                        setBookingDetails({ ...bookingDetails, mealPlanId: parseInt(e.target.value) })
-                                    }
-                                >
-                                    <option value={0}>Nem kérek</option>
-                                    <option value={1}>Reggeli</option>
-                                    <option value={2}>Félpanzió</option>
-                                    <option value={3}>Teljes ellátás</option>
-                                </select>
-                            </label>
+                            </label><label>
+                            Étkezési terv:
+                            <select
+                                value={bookingDetails.mealPlanId}
+                                onChange={(e) =>
+                                    setBookingDetails({...bookingDetails, mealPlanId: parseInt(e.target.value)})
+                                }
+                            >
+                                {mealPlanOptions.map(plan => (
+                                    <option key={plan.mealPlanId} value={plan.mealPlanId}>
+                                        {plan.mealOption}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+
                             <p>
                                 <strong>Szoba
                                     alapára:</strong> {bookingDetails.bookedPrice > 0 ? `${bookingDetails.bookedPrice} Ft/nap` : "Nincs elérhető ár"}

@@ -1,7 +1,6 @@
 import { useState, useEffect ,Fragment} from "react";
 import styles from "./Billing.module.css";
-import { markInvoiceAsPaid ,fetchUnpaidOrdersForRoom} from '../../api/bookingApi.js';
-
+import {markInvoiceAsPaid, fetchUnpaidOrdersForRoom, generateInvoiceForRoom} from '../../api/bookingApi.js';
 
 
 
@@ -9,11 +8,27 @@ function Billing() {
     const [showInvoiceFilters, setShowInvoiceFilters] = useState(false);
     const [invoices, setInvoices] = useState([]);
     const [selectedFilter, setSelectedFilter] = useState(null);
-    const [showModal, setShowModal] = useState(false); // Modal állapota
-    const [selectedInvoice, setSelectedInvoice] = useState(null); // Kiválasztott számla
+    const [showModal, setShowModal] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [selectedDetails, setSelectedDetails] = useState(null);
     const [selectedRoomDetails, setSelectedRoomDetails] = useState(null);
+    const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+    const [roomNumber, setRoomNumber] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
+
+
+
+    const handleOpenInvoiceModal = () => {
+        setShowInvoiceModal(true);
+        setErrorMessage(""); // Hibák törlése
+    };
+
+    const handleCloseInvoiceModal = () => {
+        setShowInvoiceModal(false);
+        setRoomNumber(""); // Szobaszám törlése
+        setErrorMessage(""); // Hibák törlése
+    };
 
 
     const toggleInvoiceFilters = () => {
@@ -35,9 +50,6 @@ function Billing() {
             alert("Nem sikerült lekérni a fogyasztási részleteket.");
         }
     };
-
-
-
 
     const fetchInvoices = async (filter) => {
         const response = await fetch("http://localhost:5086/api/Billing/rooms-total-billing");
@@ -73,7 +85,30 @@ function Billing() {
         }
     };
 
+    const handleGenerateInvoice = async () => {
+        if (!roomNumber.trim()) {
+            setErrorMessage("Kérlek, add meg a szobaszámot!"); // Hibaüzenet, ha nincs szobaszám
+            return;
+        }
 
+        try {
+            const response = await generateInvoiceForRoom(roomNumber); // Az API metódus visszaadja a fetch objektumot
+            const blob = await response.blob(); // PDF konvertálása blob formátumba
+
+            // PDF letöltése
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = ""; // A backend által generált fájlnevet használja
+            link.click();
+            window.URL.revokeObjectURL(url);
+
+            // Modal bezárása
+            handleCloseInvoiceModal();
+        } catch (error) {
+            setErrorMessage(error.message || "Hiba történt a számla generálása során.");
+        }
+    };
 
     const cancelPayment = () => {
         setShowModal(false); // Modal bezárása
@@ -110,13 +145,19 @@ function Billing() {
                         </div>
                     )}
 
-                    <button className={`${styles.fetchButton} ${styles.createInvoice}`}>Számla kiállítása</button>
-                    <button className={`${styles.fetchButton} ${styles.sendInvoice}`}>Számla küldése</button>
+                    <button
+                        className={`${styles.fetchButton} ${styles.createInvoice}`}
+                        onClick={handleOpenInvoiceModal}
+                    >
+                        Számla kiállítása
+                    </button>
+
+
                 </div>
 
                 {/* Jobb oldali oszlop */}
                 <div className={styles.rightColumn}>
-                    <div className={styles.topSection}>
+                <div className={styles.topSection}>
                         <h2>{selectedFilter || "Számlák"}</h2>
                         <table className={styles.invoiceTable}>
                             <thead>
@@ -206,6 +247,30 @@ function Billing() {
                 )}
             </div>
 
+            {showInvoiceModal && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <h2>Számla lekérése</h2>
+                        <label htmlFor="roomNumber">Add meg a szobaszámot:</label>
+                        <input
+                            id="roomNumber"
+                            type="text"
+                            value={roomNumber}
+                            onChange={(e) => setRoomNumber(e.target.value)}
+                            className={styles.modalInput}
+                        />
+                        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+                        <div className={styles.modalButtons}>
+                            <button onClick={handleGenerateInvoice} className={styles.confirmButton}>
+                                Generálás
+                            </button>
+                            <button onClick={handleCloseInvoiceModal} className={styles.cancelButton}>
+                                Kilép
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Modal */}
             {showModal && (

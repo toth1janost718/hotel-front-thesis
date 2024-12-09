@@ -206,10 +206,6 @@ const Modal = ({ room, maxGuests, onClose, onSave }) => {
     };
 
 
-
-
-
-
     return (
         <div className={styles.modalContainer}>
             <div className={styles.modalContentWrapper}>

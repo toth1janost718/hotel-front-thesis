@@ -52,6 +52,25 @@ export const fetchRoomPriceByType = async (roomTypeId) => {
     return response.json();
 };
 
+export const generateInvoiceForRoom = async (roomNumber) => {
+    try {
+        const response = await fetch(`${config.bookingApiBaseUrl}/api/Billing/generate-invoice/${roomNumber}`, {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            throw new Error("A szobához rendelés nem tartozik.");
+        }
+
+        return response; // Visszaadja a fetch válaszobjektumot
+    } catch (error) {
+        console.error("Hiba történt a számla generálása során:", error.message);
+        throw error;
+    }
+};
+
+
+
 export const fetchInvoicesFromApi = async (filter) => {
     try {
         const response = await fetch(`${config.bookingApiBaseUrl}/api/Billing/rooms-total-billing`, );
@@ -112,6 +131,9 @@ export const fetchUnpaidOrdersForRoom = async (roomNumber) => {
         throw error;
     }
 };
+
+
+
 
 
 

@@ -1,35 +1,50 @@
-import React, { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import employeeStyles from "./Employees.module.css";
-import vacationImg from "../../../protected/assets/employeImgs/vacation.png";
-import dayoffImg from "../../../protected/assets/employeImgs/dayoff.png";
-import workImg from "../../../protected/assets/employeImgs/work.png";
-import { getAllEmployeeSchedules } from "../../api/employeeApi.js";
+import {fetchEmployeesData} from "../../api/employeeApi.js";
+import {filterEmployees} from "../../utils/filters/filterEmployees";
+import SalaryModal from "../../components/modals/employee/SalaryModal.jsx";
+import ScheduleModal from "../../components/modals/employee/ScheduleModal.jsx";
+import DismissalModal from "../../components/modals/employee/DismissalModal.jsx";
+import OtherModal from "../../components/modals/employee/OtherModal.jsx";
+import StatusButtons from "../../components/modals/employee/StatusButtons.jsx";
+import CircleSegment from "../../components/modals/employee/CircleSegment.jsx";
+
+/**
+ * Employees Komponens
+ *
+ * Ez a komponens felelős az alkalmazottak kezelőfelületének megjelenítéséért, beleértve:
+ * - Keresősávot, amely lehetővé teszi az alkalmazottak szűrését név, pozíció vagy státusz szerint.
+ * - Státusz szűrő gombokat (pl. Szabadság, Szabadnap, Munkában).
+ * - Interaktív kör szegmenseket, amelyekkel különböző műveletek végezhetők, mint például Bér, Beosztás, Elbocsátás és Egyéb.
+ * - Egy táblázatot, amely a szűrt alkalmazottak listáját jeleníti meg.
+ *
+ * Funkciók:
+ * - Az alkalmazottak adatainak API-n keresztüli lekérése és feldolgozása (`fetchEmployeesData`).
+ * - Szűrés keresési input és státusz alapján (`filterEmployees`).
+ * - Moduláris felépítés: újrafelhasználható komponensek a felhasználói felület különböző elemeihez (modálok, gombok, kör szegmensek).
+ * - Hibakezelés az API-hívások sikertelensége esetén.
+ *
+ * SOLID elvek alkalmazása:
+ * - Egyetlen felelősség elve: Külön komponensek kezelik az egyes UI elemeket vagy logikát (pl. `StatusButtons`, `CircleSegment`, modálok).
+ * - Nyitott/Zárt elv: Új modálok vagy funkciók könnyen hozzáadhatók a meglévő logika módosítása nélkül.
+ * - Függőségek inverziója: A logika (API-hívások, szűrés) és az UI komponensek szétválasztása jobb karbantarthatóságot biztosít.
+ */
+
 
 function Employees() {
-    const [isStatusOpen, setIsStatusOpen] = useState(false); // Állapot lenyitás kezelése
-    const [activeModal, setActiveModal] = useState(null); // Aktív modál kezelése
-    const [employees, setEmployees] = useState([]); // Alkalmazottak adatai
-    const [filters, setFilters] = useState({ searchTerm: "", status: "" }); // Keresési és állapot szűrő
-    const [error, setError] = useState(""); // Hibakezelés
+    const [isStatusOpen, setIsStatusOpen] = useState(false);
+    const [activeModal, setActiveModal] = useState(null);
+    const [employees, setEmployees] = useState([]);
+    const [filters, setFilters] = useState({searchTerm: "", status: ""});
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        // API-hívás az alkalmazottak lekérdezésére
+
         const fetchEmployees = async () => {
             try {
-                const data = await getAllEmployeeSchedules();
-
-                // Állapot hozzárendelése
-                const enrichedEmployees = data.map((employee) => {
-                    let scheduleStatus = "Munkában";
-                    if (employee.isLeave) {
-                        scheduleStatus = "Szabadság";
-                    } else if (!employee.shiftStart && !employee.shiftEnd) {
-                        scheduleStatus = "Szabadnap";
-                    }
-                    return { ...employee, scheduleStatus };
-                });
-
+                const enrichedEmployees = await fetchEmployeesData();
                 setEmployees(enrichedEmployees);
+                // eslint-disable-next-line no-unused-vars
             } catch (err) {
                 setError("Nem sikerült lekérni az alkalmazottak adatait.");
             }
@@ -54,7 +69,6 @@ function Employees() {
             status: status,
         }));
     };
-
     const openModal = (modalId) => {
         setActiveModal(modalId); // Modális ablak megnyitása
     };
@@ -64,25 +78,14 @@ function Employees() {
     };
 
     const handleFilterChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFilters((prevFilters) => ({
             ...prevFilters,
             [name]: value,
         }));
     };
 
-    // Szűrés keresés és állapot szerint
-    const filteredEmployees = employees.filter((employee) => {
-        const matchesSearchTerm =
-            employee.lastName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-            employee.firstName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-            employee.positionName.toLowerCase().includes(filters.searchTerm.toLowerCase());
-
-        const matchesStatus =
-            filters.status === "" || employee.scheduleStatus === filters.status;
-
-        return matchesSearchTerm && matchesStatus;
-    });
+    const filteredEmployees = filterEmployees(employees, filters);
 
     return (
         <div className={employeeStyles.pageContainer}>
@@ -105,72 +108,30 @@ function Employees() {
                     Állapot
                 </button>
 
-                {isStatusOpen && (
-                    <div className={employeeStyles.statusIcons}>
-                        <div className={employeeStyles.iconWrapper}>
-                            <button
-                                onClick={() => handleStatusClick("Szabadság")}
-                                className={employeeStyles.iconButton}
-                                style={{ backgroundImage: `url(${vacationImg})` }}
-                                aria-label="Szabadság"
-                            />
-                            <span className={employeeStyles.iconLabel}>Szabadság</span>
-                        </div>
-                        <div className={employeeStyles.iconWrapper}>
-                            <button
-                                onClick={() => handleStatusClick("Szabadnap")}
-                                className={employeeStyles.iconButton}
-                                style={{ backgroundImage: `url(${dayoffImg})` }}
-                                aria-label="Szabadnap"
-                            />
-                            <span className={employeeStyles.iconLabel}>Szabadnap</span>
-                        </div>
-                        <div className={employeeStyles.iconWrapper}>
-                            <button
-                                onClick={() => handleStatusClick("Munkában")}
-                                className={employeeStyles.iconButton}
-                                style={{ backgroundImage: `url(${workImg})` }}
-                                aria-label="Munkában"
-                            />
-                            <span className={employeeStyles.iconLabel}>Munkában</span>
-                        </div>
-                    </div>
-                )}
+                {isStatusOpen && <StatusButtons onStatusClick={handleStatusClick}/>}
 
                 {/* Kör és szegmensek */}
                 <div className={employeeStyles.circleContainer}>
-                    <div
-                        className={`${employeeStyles.circleSegment} ${employeeStyles.segment1}`}
+                    <CircleSegment
+                        segmentClass={employeeStyles.segment1}
+                        label="Bér"
                         onClick={() => openModal("ber")}
-                    >
-                        <div className={employeeStyles.textWrapper}>
-                            <span>Bér</span>
-                        </div>
-                    </div>
-                    <div
-                        className={`${employeeStyles.circleSegment} ${employeeStyles.segment2}`}
+                    />
+                    <CircleSegment
+                        segmentClass={employeeStyles.segment2}
+                        label="Beosztás"
                         onClick={() => openModal("beosztas")}
-                    >
-                        <div className={employeeStyles.textWrapper}>
-                            <span>Beosztás</span>
-                        </div>
-                    </div>
-                    <div
-                        className={`${employeeStyles.circleSegment} ${employeeStyles.segment3}`}
+                    />
+                    <CircleSegment
+                        segmentClass={employeeStyles.segment3}
+                        label="Elbocsátás"
                         onClick={() => openModal("elbocsatas")}
-                    >
-                        <div className={employeeStyles.textWrapper}>
-                            <span>Elbocsátás</span>
-                        </div>
-                    </div>
-                    <div
-                        className={`${employeeStyles.circleSegment} ${employeeStyles.segment4}`}
+                    />
+                    <CircleSegment
+                        segmentClass={employeeStyles.segment4}
+                        label="Egyéb"
                         onClick={() => openModal("egyeb")}
-                    >
-                        <div className={employeeStyles.textWrapper}>
-                            <span>Egyéb</span>
-                        </div>
-                    </div>
+                    />
                 </div>
             </div>
 
@@ -199,42 +160,13 @@ function Employees() {
             </div>
 
             {/* Modálok */}
-            {activeModal === "ber" && (
-                <div className={employeeStyles.modalOverlay} onClick={closeModal}>
-                    <div className={employeeStyles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <h2>Bér információ</h2>
-                        <p>Itt található a bérrel kapcsolatos információ.</p>
-                        <button onClick={closeModal}>Bezárás</button>
-                    </div>
-                </div>
-            )}
-            {activeModal === "beosztas" && (
-                <div className={employeeStyles.modalOverlay} onClick={closeModal}>
-                    <div className={employeeStyles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <h2>Beosztás információ</h2>
-                        <p>Itt található a beosztással kapcsolatos információ.</p>
-                        <button onClick={closeModal}>Bezárás</button>
-                    </div>
-                </div>
-            )}
-            {activeModal === "elbocsatas" && (
-                <div className={employeeStyles.modalOverlay} onClick={closeModal}>
-                    <div className={employeeStyles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <h2>Elbocsátás információ</h2>
-                        <p>Itt található az elbocsátással kapcsolatos információ.</p>
-                        <button onClick={closeModal}>Bezárás</button>
-                    </div>
-                </div>
-            )}
-            {activeModal === "egyeb" && (
-                <div className={employeeStyles.modalOverlay} onClick={closeModal}>
-                    <div className={employeeStyles.modalContent} onClick={(e) => e.stopPropagation()}>
-                        <h2>Egyéb információ</h2>
-                        <p>Itt található az egyéb információ.</p>
-                        <button onClick={closeModal}>Bezárás</button>
-                    </div>
-                </div>
-            )}
+
+            {activeModal === "ber" && <SalaryModal onClose={closeModal}/>}
+            {activeModal === "beosztas" && <ScheduleModal onClose={closeModal}/>}
+            {activeModal === "elbocsatas" && <DismissalModal onClose={closeModal}/>}
+            {activeModal === "egyeb" && <OtherModal onClose={closeModal}/>}
+
+
         </div>
     );
 }

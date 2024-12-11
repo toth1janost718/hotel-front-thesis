@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 import "./Content.module.css";
 import ProtectedRoutes from "../../../components/ProtectedRoute/ProtectedRoute.jsx";
@@ -7,8 +6,6 @@ import Restaurant from "../../../protected/pages/Restaurant/Restaurant.jsx";
 import Booking from "../../../protected/pages/Booking/Booking.jsx";
 import Employees from "../../../protected/pages/Employees/Employees.jsx";
 import Billing from "../../pages/Billing/Billing.jsx";
-
-
 
 const Content=() => {
     return (

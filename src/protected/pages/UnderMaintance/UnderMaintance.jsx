@@ -1,6 +1,16 @@
-import React from 'react';
 import underMainstyles from "../UnderMaintance/UnderMaintance.module.css";
 
+/**
+ * UnderMaintance Component
+ *
+ * Ez a komponens egy karbantartási üzenetet jelenít meg, amely jelzi, hogy az adott funkció fejlesztés alatt áll.
+ *
+ * Megjelenítés:
+ * - Animált háttér.
+ * - Hotel ikon és "Hamarosan" cím.
+ * - Tájékoztató szöveg a fejlesztés állapotáról.
+ * - Betöltő animáció a vizuális hatás fokozására.
+ */
 
 
 function UnderMaintance() {
@@ -12,7 +22,7 @@ function UnderMaintance() {
                 </div>
                 <h1 className={underMainstyles['maintenance-title']}>Hamarosan</h1>
                 <p className={underMainstyles['maintenance-text']}>
-                    A Hotelmenedzsment alkalmazás ezen része fejlesztés alatt.
+                    Az oldal ezen része fejlesztés alatt.
                 </p>
                 <div className={underMainstyles['loader']}></div>
             </div>

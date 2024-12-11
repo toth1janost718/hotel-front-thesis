@@ -1,5 +1,6 @@
 import {iconsImgs} from '../../utils/iconImages.js';
 
+// Ez a `navigationLinks` tömb tartalmazza az alkalmazás oldalakhoz tartozó navigációs adatokat.
 export const navigationLinks = [
     {id:1, title:'Foglalás', image:iconsImgs.booking},
     {id:2, title:'Étterem ', image:iconsImgs.restaurant},

@@ -1,4 +1,4 @@
-import config from "../../../config.js";
+import { fetchApiData } from "./apiHelpers.js"; // Az általános API-függvény importálása
 import {toast} from "react-toastify";
 
 /**
@@ -16,16 +16,12 @@ import {toast} from "react-toastify";
  * - `fetchEmployeesData`:  Alkalmazottak lekérdezése és státuszok hozzárendelése
  */
 
+
 export const getAllEmployeeSchedules = async () => {
     try {
-        const response = await fetch(`${config.hrApiBaseUrl}/api/Employee/schedules`);
-        if (!response.ok) {
-            throw new Error("Nem sikerült lekérni az alkalmazottak adatait.");
-        }
-        return await response.json();
+        return await fetchApiData("/api/Employee/schedules");
     } catch (error) {
-        console.error("Hiba az alkalmazottak adatainak lekérésekor:", error);
-        toast.error("Hiba történt az adatok lekérésekor. Kérjük, próbálja újra!");
+        toast.error("Nem sikerült lekérni az alkalmazottak adatait.");
         throw error;
     }
 };
@@ -33,8 +29,6 @@ export const getAllEmployeeSchedules = async () => {
 export const fetchEmployeesData = async () => {
     try {
         const data = await getAllEmployeeSchedules();
-
-        // Státusz hozzárendelése
         return data.map((employee) => {
             let scheduleStatus = "Munkában";
             if (employee.isLeave) {
@@ -45,32 +39,25 @@ export const fetchEmployeesData = async () => {
             return { ...employee, scheduleStatus };
         });
     } catch (error) {
-        console.error("Hiba az alkalmazottak adatainak lekérésekor:", error);
-        toast.error("Hiba történt az alkalmazottak adatainak lekérésekor. Kérjük, próbálja újra!");
-        throw error; // Hibát továbbítjuk, hogy a komponensben kezelhető legyen
-    }
-};
-
-export const getEmployeeCurrentMonthSchedule = async (employeeId) => {
-
-
-    try {
-        const response = await fetch(`${config.hrApiBaseUrl}/api/Employee/${employeeId}/schedule`);
-        if (!response.ok) {
-            throw new Error("Nem sikerült lekérni az alkalmazott havi beosztását.");
-        }
-        return await response.json();
-    } catch (error) {
-        console.error("Hiba az alkalmazott havi beosztásának lekérésekor:", error);
-        toast.error("Hiba történt az adatok lekérésekor. Kérjük, próbálja újra!");
+        toast.error("Hiba történt az alkalmazottak adatainak lekérésekor.");
         throw error;
     }
 };
 
+
+export const getEmployeeCurrentMonthSchedule = async (employeeId) => {
+    try {
+        return await fetchApiData(`/api/Employee/${employeeId}/schedule`);
+    } catch (error) {
+        toast.error("Nem sikerült lekérni az alkalmazott havi beosztását.");
+        throw error;
+    }
+};
+
+
 export const updateShiftInDatabase = async (employeeId, updatedShift) => {
     try {
-
-        const response = await fetch(`${config.hrApiBaseUrl}/api/Employee/${employeeId}/schedule`, {
+        await fetchApiData(`/api/Employee/${employeeId}/schedule`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -84,14 +71,8 @@ export const updateShiftInDatabase = async (employeeId, updatedShift) => {
                 deleteLeaveIfOverlap: true,
             }),
         });
-
-        if (!response.ok) {
-            throw new Error("Nem sikerült frissíteni a műszak adatait.");
-        }
     } catch (error) {
-        console.error("Hiba a műszak frissítésekor:", error);
-        toast.error("Hiba a műszak frissítésekor. Kérjük, próbálja újra!");
+        toast.error("Nem sikerült frissíteni a műszak adatait.");
         throw error;
     }
 };
-

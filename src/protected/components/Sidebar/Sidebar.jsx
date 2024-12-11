@@ -38,7 +38,7 @@ function Sidebar() {
         >
             <Container fluid>
                 <Navbar.Brand className={styles.brand}>
-                    Moonlight Valley Hotel
+                    CheckInn
                 </Navbar.Brand>
                 <Navbar.Toggle
                     aria-controls="navbar-nav"

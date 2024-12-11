@@ -1,78 +1,86 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import restaurantStyles from "./Restaurant.module.css";
-import config from "../../../../config.js";
+import {fetchMenuItems, fetchOccupiedRooms, createOrder} from "../../api/restaurantApi.js";
+import {useCart} from "../../hooks/restaurant/useCart.js";
+import {usePopup} from "../../hooks/restaurant/usePopup.js";
+import MealCards from "./components/MealCards.jsx";
+import FilterDropdown from "./components/FilterDropdown.jsx";
+import OrderSummary from "./components/OrderSummary.jsx";
+/**
+ * Restaurant - Fő komponens az éttermi rendelési rendszer megjelenítéséhez és kezeléséhez.
+ *
+ * Funkcionalitások:
+ * 1. **Menüelemek betöltése**:
+ *    - Az étkezési típusok és menüelemek dinamikusan betöltődnek az API-ból.
+ *    - Az adatok egy szűrőn keresztül kiválaszthatók.
+ *
+ * 2. **Foglaltsági adatok kezelése**:
+ *    - A mai napon foglalt szobák listája betöltődik az API-ból.
+ *    - A felhasználó kiválaszthat egy szobát rendelés rögzítéséhez.
+ *
+ * 3. **Kosár logika**:
+ *    - Tételek hozzáadása, eltávolítása és a teljes összeg kiszámítása.
+ *    - A `useCart` hook biztosítja a kosár logikáját.
+ *
+ * 4. **Felugró értesítések kezelése**:
+ *    - A rendelés sikeres rögzítéséről vagy hibaüzenetekről értesítést kap a felhasználó.
+ *    - A `usePopup` hook kezeli a felugró ablakokat.
+ *
+ * 5. **Moduláris komponensek használata**:
+ *    - **MealCards**: A menüelemeket megjelenítő komponens.
+ *    - **FilterDropdown**: Az étkezési típusok szűréséhez.
+ *    - **OrderSummary**: A kosár tartalmának összegzése és rendelési folyamat.
+ *
+ * React hook-ok:
+ * - `useState`: Az alkalmazás állapotának kezelésére (pl. menüelemek, foglalt szobák).
+ * - `useEffect`: Az adatok betöltésére az API-ból.
+ *
+ * API használat:
+ * - Az `api/restaurantApi.js` fájl kezeli az összes API-hívást.
+ * - Funkciók: `fetchMenuItems`, `fetchOccupiedRooms`, `createOrder`.
+ *
+ * Főbb elemek:
+ * - Betöltésjelző állapot (`isLoading`).
+ * - Kosárkezelés (hozzáadás, eltávolítás, összegzés).
+ * - Szobaszám kiválasztása és rendelés rögzítése.
+ */
 
 function Restaurant() {
     const [menuItems, setMenuItems] = useState([]);
     const [mealTypes, setMealTypes] = useState([]);
     const [selectedMealType, setSelectedMealType] = useState("");
-    const [selectedItems, setSelectedItems] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [occupiedRooms, setOccupiedRooms] = useState([]);
-    const [showPopup, setShowPopup] = useState(false);
-    const [popupMessage, setPopupMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Kosár logika a useCart hook-ból
+    const {selectedItems, addItem, removeItem, clearCart, calculateTotal} = useCart();
+
+    // Felugró ablak logika a usePopup hook-ból
+    const {showPopup, popupMessage, openPopup, closePopup} = usePopup();
 
     useEffect(() => {
-        // Menü elemek betöltése
-        fetch(`${config.bookingApiBaseUrl}/api/MealTypeFilter`)
-            .then((response) => response.json())
-            .then((data) => {
-                const groupedData = data.reduce((acc, item) => {
-                    if (!acc[item.mealTypeName]) acc[item.mealTypeName] = [];
-                    acc[item.mealTypeName].push(item);
-                    return acc;
-                }, {});
-                setMenuItems(groupedData);
-                setMealTypes(Object.keys(groupedData));
-            })
-            .catch((error) =>
-                console.error("Hiba történt az adatok betöltésekor:", error)
-            );
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const {menuItems, mealTypes} = await fetchMenuItems();
+                setMenuItems(menuItems);
+                setMealTypes(mealTypes);
 
-        // Foglalt szobák lekérdezése a mai napra
-        fetch(`${config.bookingApiBaseUrl}/api/filters/roomstatus/today`)
-            .then((response) => response.json())
-            .then((data) => {
-                const occupied = data.filter((room) => room.status === "Foglalt");
-                setOccupiedRooms(occupied.map((room) => room.roomId));
-            })
-            .catch((error) =>
-                console.error("Hiba történt a szobák státuszának betöltésekor:", error)
-            );
+                const occupied = await fetchOccupiedRooms();
+                setOccupiedRooms(occupied);
+            } catch (error) {
+                console.error("Hiba történt az adatok betöltésekor:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
     }, []);
 
     const handleFilterChange = (e) => {
         setSelectedMealType(e.target.value);
-    };
-
-    const handleAddToOrder = (item) => {
-        setSelectedItems((prevItems) => {
-            const existingItem = prevItems.find((i) => i.itemId === item.itemId);
-            if (existingItem) {
-                return prevItems.map((i) =>
-                    i.itemId === item.itemId
-                        ? { ...i, quantity: i.quantity + 1 }
-                        : i
-                );
-            } else {
-                return [...prevItems, { ...item, quantity: 1 }];
-            }
-        });
-    };
-
-    const handleRemoveFromOrder = (item) => {
-        setSelectedItems((prevItems) => {
-            const existingItem = prevItems.find((i) => i.itemId === item.itemId);
-            if (existingItem.quantity === 1) {
-                return prevItems.filter((i) => i.itemId !== item.itemId);
-            } else {
-                return prevItems.map((i) =>
-                    i.itemId === item.itemId
-                        ? { ...i, quantity: i.quantity - 1 }
-                        : i
-                );
-            }
-        });
     };
 
     const handleRoomChange = (e) => {
@@ -90,44 +98,23 @@ function Restaurant() {
             };
 
             try {
-                const response = await fetch(
-                    `${config.bookingApiBaseUrl}/api/OrderProcessing/createOrder`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(orderPayload),
-                    }
-                );
-
-                if (response.ok) {
-                    const result = await response.json();
-                    setPopupMessage(
-                        `Rendelés sikeresen rögzítve a(z) ${selectedRoom}. szobához.`
-                    );
-                } else {
-                    throw new Error("Nem sikerült a rendelés rögzítése.");
-                }
+                await createOrder(orderPayload);
+                openPopup(`Rendelés sikeresen rögzítve a(z) ${selectedRoom}. szobához.`);
+                clearCart(); // Kosár ürítése
+                // eslint-disable-next-line no-unused-vars
             } catch (error) {
-                setPopupMessage("Hiba történt a rendelés rögzítése során.");
+                openPopup("Hiba történt a rendelés rögzítése során.");
             }
-
-            setShowPopup(true);
-            setSelectedItems([]); // Kosár ürítése
         } else {
             alert("Kérjük, válasszon szobát és adjon hozzá rendelési tételt!");
         }
     };
 
-    const handleClosePopup = () => {
-        setShowPopup(false);
-    };
+    const totalAmount = calculateTotal();
 
-    const totalAmount = selectedItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
+    if (isLoading) {
+        return <div className={restaurantStyles["loading"]}>Betöltés...</div>;
+    }
 
     return (
         <div className={restaurantStyles["restaurant-container"]}>
@@ -138,112 +125,33 @@ function Restaurant() {
                 </h2>
 
                 {/* Kártyák */}
-                <div className={restaurantStyles["meal-cards-container"]}>
-                    {(selectedMealType
-                            ? menuItems[selectedMealType]
-                            : Object.values(menuItems).flat()
-                    )?.map((item) => (
-                        <div
-                            key={item.itemId}
-                            className={restaurantStyles["meal-card"]}
-                            onClick={() => handleAddToOrder(item)}
-                        >
-                            <div className={restaurantStyles["card-front"]}>
-                                <img
-                                    src={item.url}
-                                    alt={item.name}
-                                    className={restaurantStyles["meal-card-image"]}
-                                />
-                                <h4 className={restaurantStyles["meal-card-title"]}>
-                                    {item.name}
-                                </h4>
-                            </div>
-                            <div className={restaurantStyles["card-back"]}>
-                                <p className={restaurantStyles["meal-card-price"]}>
-                                    {item.price} Ft
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <MealCards
+                    menuItems={menuItems}
+                    selectedMealType={selectedMealType}
+                    addItem={addItem}
+                />
             </div>
 
             {/* Jobb oldali panel */}
             <div className={restaurantStyles["sidebar"]}>
                 {/* Szűrő */}
-                <div className={restaurantStyles["filter-container"]}>
-                    <label htmlFor="mealTypeFilter">Típus</label>
-                    <select
-                        id="mealTypeFilter"
-                        value={selectedMealType}
-                        onChange={handleFilterChange}
-                        className={restaurantStyles["meal-type-filter"]}
-                    >
-                        <option value="">Összes</option>
-                        {mealTypes.map((mealType) => (
-                            <option key={mealType} value={mealType}>
-                                {mealType}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <FilterDropdown
+                    mealTypes={mealTypes}
+                    selectedMealType={selectedMealType}
+                    onFilterChange={handleFilterChange}
+                />
 
                 {/* Kosár összegzés */}
-                <div className={restaurantStyles["order-summary"]}>
-                    <h3>Kosár</h3>
-                    <ul>
-                        {selectedItems.map((item) => (
-                            <li key={item.itemId}>
-                                <div className={restaurantStyles["item-controls"]}>
-                                    <button
-                                        className={`${restaurantStyles["quantity-button"]} ${restaurantStyles["decrease"]}`}
-                                        onClick={() => handleRemoveFromOrder(item)}
-                                    >
-                                        -
-                                    </button>
-                                    <button
-                                        className={`${restaurantStyles["quantity-button"]} ${restaurantStyles["increase"]}`}
-                                        onClick={() => handleAddToOrder(item)}
-                                    >
-                                        +
-                                    </button>
-                                    <span>
-                                        {item.name} - {item.quantity} db -{" "}
-                                        {item.price * item.quantity} Ft
-                                    </span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <h4>Összesen: {totalAmount} Ft</h4>
-
-                    {/* Szobaszám kiválasztása */}
-                    <div className={restaurantStyles["room-selection"]}>
-                        <label htmlFor="roomNumber">Szobaszám:</label>
-                        <select
-                            id="roomNumber"
-                            value={selectedRoom || ""}
-                            onChange={handleRoomChange}
-                            className={restaurantStyles["room-dropdown"]}
-                        >
-                            <option value="" disabled>
-                                Válassz szobát
-                            </option>
-                            {occupiedRooms.map((roomId) => (
-                                <option key={roomId} value={roomId}>
-                                    {roomId}
-                                </option>
-                            ))}
-                        </select>
-                        <button
-                            className={restaurantStyles["add-order-button"]}
-                            disabled={!selectedRoom || selectedItems.length === 0}
-                            onClick={handleAddOrderToRoom}
-                        >
-                            Hozzáadás
-                        </button>
-                    </div>
-                </div>
+                <OrderSummary
+                    selectedItems={selectedItems}
+                    removeItem={removeItem}
+                    addItem={addItem}
+                    totalAmount={totalAmount}
+                    occupiedRooms={occupiedRooms}
+                    selectedRoom={selectedRoom}
+                    onRoomChange={handleRoomChange}
+                    onAddOrder={handleAddOrderToRoom}
+                />
             </div>
 
             {/* Felugró ablak */}
@@ -251,7 +159,7 @@ function Restaurant() {
                 <div className={restaurantStyles["popup"]}>
                     <div className={restaurantStyles["popup-content"]}>
                         <p>{popupMessage}</p>
-                        <button onClick={handleClosePopup}>OK</button>
+                        <button onClick={closePopup}>OK</button>
                     </div>
                 </div>
             )}

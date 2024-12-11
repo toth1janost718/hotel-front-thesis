@@ -2,6 +2,30 @@ import { useState, useEffect ,Fragment} from "react";
 import styles from "./Billing.module.css";
 import {markInvoiceAsPaid, fetchUnpaidOrdersForRoom, generateInvoiceForRoom} from '../../api/bookingApi.js';
 
+/**
+ * Billing - Számlázási modul React komponens
+ * * Ez a komponens kezeli a szállodai számlázással kapcsolatos funkciókat, beleértve
+ * a számlák listázását, szűrését, részleteik megtekintését, számlák generálását,
+ * valamint a fizetési állapotok frissítését.
+ *
+ * Főbb állapotok:
+ * - `showInvoiceFilters`: Számla szűrő panel megjelenítése/elrejtése.
+ * - `invoices`: A számlák listája, amely az API hívások eredménye alapján frissül.
+ * - `selectedFilter`: A jelenleg alkalmazott szűrő, például "Nyitott" vagy "Fizetett".
+ * - `selectedInvoice`: Az éppen kiválasztott számla a fizetéshez.
+ * - `selectedRoomDetails`: Egy szoba részletes fogyasztási adatai.
+ * - `roomNumber`: A számla generálásához megadott szobaszám.
+ * - `errorMessage`: Hibák megjelenítése, például hiányzó szobaszám.
+ *
+ * Főbb funkciók:
+ * - `fetchInvoices`: Számlák lekérése az API-ból a megadott szűrő alapján.
+ * - `handleDetailsClick`: Egy szoba részleteinek betöltése a számlához tartozó fogyasztási adatokkal.
+ * - `handleGenerateInvoice`: PDF számla generálása a szobaszám alapján, amely letölthető.
+ * - `confirmPayment`: Egy számla fizetettként való megjelölése az API-n keresztül, majd a felület frissítése.
+ * - `toggleInvoiceFilters`: Számla szűrő panel megnyitása/zárása.
+ * - `handlePayClick`: Kiválasztja a számlát fizetéshez, és megnyitja a modal ablakot.
+
+ */
 
 
 function Billing() {

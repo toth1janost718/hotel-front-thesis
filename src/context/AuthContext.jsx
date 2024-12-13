@@ -4,7 +4,10 @@ import PropTypes from 'prop-types';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null); // Felhasználói adatok
+    const [user, setUser] = useState(() => {
+        return JSON.parse(localStorage.getItem('user')) || null;
+    });
+
 
     useEffect(() => {
         // Bejelentkezett felhasználó adatok betöltése localStorage-ból

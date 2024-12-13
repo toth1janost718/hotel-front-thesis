@@ -1,8 +1,8 @@
-.custom-navbar {
+.checkinn-navbar {
     background: linear-gradient(135deg, #1A374D, #406882, #E3C778);
     padding: 10px 20px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 1000 !important;
     transition: background 0.5s ease, box-shadow 0.3s ease;
     position: fixed;
     height: 70px;
@@ -15,6 +15,7 @@
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 
 }
+
 
 .brand {
 
@@ -45,25 +46,29 @@
     font-weight: bold;
     text-decoration: none;
     padding: 10px 15px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    border-radius: 12px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .navLink:hover {
-    background-color: rgba(227, 199, 120, 0.8);
-    color: #FFFFFF;
-    transform: scale(1.1);
-    filter: brightness(1.5) sepia(1) hue-rotate(30deg) saturate(10);
+    background-color: rgba(34, 40, 49, 0.85);
+    color: #FFD700;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
 }
 
 .navLink.active {
-    background-color: #406882;
+    background-color: #A3D2E2;
     color: #1A374D !important;
     font-weight: bold;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(163, 210, 226, 0.5);
 }
+
 
 .icon {
     color: #FFD700;
@@ -79,90 +84,99 @@
     display: flex;
     align-items: center;
 }
-
 .logoutLink {
     color: white !important;
+    background-color: rgba(34, 40, 49, 0.85);
     padding: 10px 15px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 12px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .logoutLink:hover {
-    background-color: #FFD700;
+    background-color: #A3D2E2;
     color: #1A374D !important;
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(163, 210, 226, 0.5);
 }
 
-@media (max-width: 768px) {
-    @media (max-width: 768px) {
-
-        .navLinks {
-            position: absolute;
-            top: 70px;
-            left: 0;
-            right: 0;
-            background: rgba(34, 40, 49, 0.9);
-            backdrop-filter: blur(3px);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 20px;
-            z-index: 999;
-            border-radius: 0 0 12px 12px;
-        }
+.logoutLink:active {
+    background-color: #1A374D;
+    color: #FFFFFF !important;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 
 
-        .navLink {
-            font-size: 1.1rem;
-            padding: 12px 18px;
-            text-align: center;
-            border-radius: 6px;
-            background-color: rgba(57, 62, 70, 0.8);
-            color: #FFFFFF;
-            transition: all 0.3s ease;
-        }
 
-        .navLink:hover {
-            background-color: rgba(255, 193, 7, 0.85);
-            color: #1A374D;
-            transform: scale(1.05);
-        }
+.toggle {
+    display: none;
+}
 
-
-        .logoutLink {
-            font-size: 1.2rem;
-            padding: 12px 18px;
-            margin-top: auto;
-            background-color: rgba(255, 193, 7, 0.8);
-            color: #1A374D;
-            text-align: center;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .logoutLink:hover {
-            background-color: rgba(255, 193, 7, 1);
-            color: #162A49;
-            transform: scale(1.05);
-        }
-    }
-
-
-    .custom-navbar {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 10px;
-    }
-
-
+@media (max-width: 1024px) {
     .navLinks {
-        display: none; /* Alapértelmezésben rejtve */
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(34, 40, 49, 0.9);
+        backdrop-filter: blur(3px);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        z-index: 999;
+        border-radius: 0 0 12px 12px;
     }
 
-    .navLinks.active {
-        display: flex; /* Kinyitott állapotban jelenik meg */
+    .toggle {
+        display: block !important;
+        position: relative;
+        z-index: 1051;
+        border: none;
+        background: transparent;
     }
 
+    .navLink {
+        font-size: 1.1rem;
+        padding: 12px 18px;
+        text-align: center;
+        border-radius: 6px;
+        background-color: rgba(57, 62, 70, 0.8);
+        color: #FFFFFF;
+        transition: all 0.3s ease;
+    }
 
+    .navLink:hover {
+        background-color: rgba(255, 193, 7, 0.85);
+        color: #1A374D;
+        transform: scale(1.05);
+    }
+
+    .logoutLink {
+        font-size: 1.2rem;
+        padding: 12px 18px;
+        background-color: rgba(34, 40, 49, 0.85);
+        color: white !important;
+        text-align: center;
+        border-radius: 12px;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        margin-top: 20px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .logoutLink:hover {
+        background-color: #A3D2E2;
+        color: #1A374D !important;
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(163, 210, 226, 0.5);
+    }
+
+    .logoutLink:active {
+        background-color: #1A374D;
+        color: #FFFFFF !important;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
 }
 

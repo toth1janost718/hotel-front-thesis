@@ -14,6 +14,10 @@ function Sidebar() {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
+    const isActive = (link) => {
+        const cleanTitle = removeAccents(link.title.toLowerCase());
+        return location.pathname === `/${cleanTitle}`;
+    };
 
     const handleNavigate = (link) => {
         setExpanded(false); // Hamburger menü bezárása
@@ -34,7 +38,7 @@ function Sidebar() {
     return (
         <Navbar
             expand="lg"
-            className={styles['custom-navbar']}
+            className={styles['checkinn-navbar']}
             expanded={expanded}
             fixed="top"
         >
@@ -50,7 +54,7 @@ function Sidebar() {
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className={`me-auto ${styles.navLinks}`}>
                         {navigationLinks
-
+                            // HR menü elrejtése RoleId alapján, Kilépés kivételével
                             .filter((link) => {
                                 if (link.title === 'HR') {
                                     return user && user.roleId <= 2; // Csak 1-es és 2-es RoleId esetén jelenjen meg
@@ -58,14 +62,12 @@ function Sidebar() {
                                 return link.title !== 'Kilépés';
                             })
                             .map((link) => {
-                                const isActive =
-                                    location.pathname === `/${link.title.toLowerCase()}`;
                                 return (
                                     <Nav.Link
                                         key={link.id}
                                         onClick={() => handleNavigate(link)}
                                         className={`${styles.navLink} ${
-                                            isActive ? styles.active : ''
+                                            isActive(link) ? styles.active : ''
                                         }`}
                                     >
                                         <img
@@ -97,6 +99,8 @@ function Sidebar() {
                             ))}
                     </Nav>
                 </Navbar.Collapse>
+
+
 
             </Container>
         </Navbar>

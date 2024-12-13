@@ -111,7 +111,7 @@ function LoginPage() {
             if (response.ok) {
                 toast.success("A jelszó sikeresen frissítve.", {
                     position: "top-center",
-                    autoClose: 3000,
+                    autoClose: 1000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
@@ -153,12 +153,12 @@ function LoginPage() {
 
                     {errorMessage && <p className={loginPageCSS.error}>{errorMessage}</p>}
 
-                    <button type='submit'>Belépés</button>
+                    <button type='submit'  >Belépés</button>
                     <div className={loginPageCSS.registerLink}>
                         <p>Elfelejtette a jelszavát? <a href="#" onClick={registerLink}> Új jelszó </a></p>
                     </div>
                 </form>
-                <button type='submit' onClick={handleNavigation}>Vissza a weboldalra</button>
+                <button type='submit'  onClick={handleNavigation}>Vissza a főoldalra</button>
             </div>
 
             <div

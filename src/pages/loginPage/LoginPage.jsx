@@ -4,6 +4,9 @@ import { FaUser, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import config from "../../../config.js";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function LoginPage() {
     useEffect(() => {
@@ -54,23 +57,29 @@ function LoginPage() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.isSuccess) {
-                    // Felhasználói adatokat elmentjük (pl. Context vagy localStorage)
+
                     const { user } = data;
                     localStorage.setItem('user', JSON.stringify(user)); // Opciósan mentés localStorage-ba
-
-                    // Példa: a login metódus frissítheti az AuthContext-et
                     login(user);
-
+                    // Sikeres bejelentkezés toast
+                    toast.success("Sikeres bejelentkezés!");
                     // Navigáció a dashboard-ra
                     navigate("/dashboard");
                 } else {
-                    setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
+                    toast.error(data.message || "Hibás felhasználónév vagy jelszó.");
                 }
+            } else if (response.status === 401) {
+                // Unauthorized (pl. hibás jelszó)
+                const data = await response.json();
+                toast.error(data.message || "Hibás felhasználónév vagy jelszó.");
             } else {
-                setErrorMessage("Hiba történt a bejelentkezés során.");
+                // Egyéb hiba
+                toast.error("Hiba történt a bejelentkezés során.");
             }
         } catch (error) {
-            setErrorMessage("Nem sikerült kapcsolódni a szerverhez.");
+            // Hálózati vagy váratlan hibák kezelése
+            toast.error("Nem sikerült kapcsolódni a szerverhez.");
+            console.error("Hiba történt:", error);
         }
     };
 
@@ -78,12 +87,12 @@ function LoginPage() {
         e.preventDefault();
 
         if (!username || !newPassword || !confirmPassword) {
-            alert("Kérjük, töltse ki az összes mezőt!");
+            toast.error("Kérjük, töltse ki az összes mezőt!");
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            alert("A jelszavak nem egyeznek!");
+            toast.error("A jelszavak nem egyeznek!");
             return;
         }
 
@@ -100,14 +109,21 @@ function LoginPage() {
             });
 
             if (response.ok) {
-                alert("A jelszó sikeresen frissítve.");
+                toast.success("A jelszó sikeresen frissítve.", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
                 setAction('');
             } else {
                 const data = await response.json();
-                alert(data.message || "Hiba történt a jelszó frissítése során.");
+                toast.error(data.message || "Hiba történt a jelszó frissítése során.");
             }
         } catch (error) {
-            alert("Nem sikerült csatlakozni a szerverhez.");
+            toast.error("Nem sikerült csatlakozni a szerverhez.");
         }
     };
 

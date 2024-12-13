@@ -52,7 +52,14 @@ function LoginPage() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.isSuccess) {
-                    login();
+                    // Felhasználói adatokat elmentjük (pl. Context vagy localStorage)
+                    const { user } = data;
+                    localStorage.setItem('user', JSON.stringify(user)); // Opciósan mentés localStorage-ba
+
+                    // Példa: a login metódus frissítheti az AuthContext-et
+                    login(user);
+
+                    // Navigáció a dashboard-ra
                     navigate("/dashboard");
                 } else {
                     setErrorMessage(data.message || "Hibás felhasználónév vagy jelszó.");
@@ -60,12 +67,11 @@ function LoginPage() {
             } else {
                 setErrorMessage("Hiba történt a bejelentkezés során.");
             }
-            // eslint-disable-next-line no-unused-vars
         } catch (error) {
-
             setErrorMessage("Nem sikerült kapcsolódni a szerverhez.");
         }
     };
+
 
     return (
         <div className={`${loginPageCSS.wrapper} ${action === 'active' ? loginPageCSS.active : ''}`}>

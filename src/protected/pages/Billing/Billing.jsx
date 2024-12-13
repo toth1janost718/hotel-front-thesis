@@ -1,6 +1,7 @@
 import { useState, useEffect ,Fragment} from "react";
 import styles from "./Billing.module.css";
 import {markInvoiceAsPaid, fetchUnpaidOrdersForRoom, generateInvoiceForRoom} from '../../api/bookingApi.js';
+import config from "../../../../config.js";
 
 /**
  * Billing - Számlázási modul React komponens
@@ -76,7 +77,7 @@ function Billing() {
     };
 
     const fetchInvoices = async (filter) => {
-        const response = await fetch("http://localhost:5086/api/Billing/rooms-total-billing");
+        const response = await fetch(`${config.bookingApiBaseUrl}/api/Billing/rooms-total-billing`);
         const data = await response.json();
         const filteredData = data.filter(invoice =>
             filter === "Nyitott" ? !invoice.isPaid : invoice.isPaid

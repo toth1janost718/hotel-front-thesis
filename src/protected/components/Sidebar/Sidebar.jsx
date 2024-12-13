@@ -3,11 +3,13 @@ import { Navbar, Nav, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { navigationLinks } from './NavLinkData';
 import styles from './Sidebar.module.css';
+import { useAuth } from '../../../context/AuthContext.jsx';
 
 function Sidebar() {
     const [expanded, setExpanded] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAuth();
     const removeAccents = (str) => {
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
@@ -48,11 +50,16 @@ function Sidebar() {
                 <Navbar.Collapse id="navbar-nav">
                     <Nav className={`me-auto ${styles.navLinks}`}>
                         {navigationLinks
-                            .filter((link) => link.title !== 'Kilépés')
+
+                            .filter((link) => {
+                                if (link.title === 'HR') {
+                                    return user && user.roleId <= 2; // Csak 1-es és 2-es RoleId esetén jelenjen meg
+                                }
+                                return link.title !== 'Kilépés';
+                            })
                             .map((link) => {
                                 const isActive =
-                                    location.pathname ===
-                                    `/${link.title.toLowerCase()}`;
+                                    location.pathname === `/${link.title.toLowerCase()}`;
                                 return (
                                     <Nav.Link
                                         key={link.id}
@@ -90,6 +97,7 @@ function Sidebar() {
                             ))}
                     </Nav>
                 </Navbar.Collapse>
+
             </Container>
         </Navbar>
     );
